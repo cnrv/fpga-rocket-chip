@@ -1,0 +1,9 @@
+xpm_cdc.sv,systemverilog,xil_defaultlib,../../../../../../../../opt/Xilinx/Vivado/2017.1/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv,
+xpm_VCOMP.vhd,vhdl,xpm,../../../../../../../../opt/Xilinx/Vivado/2017.1/data/ip/xpm/xpm_VCOMP.vhd,
+axi_lite_ipif_v3_0_vh_rfs.vhd,vhdl,axi_lite_ipif_v3_0_4,../../../ipstatic/hdl/axi_lite_ipif_v3_0_vh_rfs.vhd,
+lib_pkg_v1_0_rfs.vhd,vhdl,lib_pkg_v1_0_2,../../../ipstatic/hdl/lib_pkg_v1_0_rfs.vhd,
+lib_srl_fifo_v1_0_rfs.vhd,vhdl,lib_srl_fifo_v1_0_2,../../../ipstatic/hdl/lib_srl_fifo_v1_0_rfs.vhd,
+lib_cdc_v1_0_rfs.vhd,vhdl,lib_cdc_v1_0_2,../../../ipstatic/hdl/lib_cdc_v1_0_rfs.vhd,
+axi_uartlite_v2_0_vh_rfs.vhd,vhdl,axi_uartlite_v2_0_16,../../../ipstatic/hdl/axi_uartlite_v2_0_vh_rfs.vhd,
+axi_uartlite_0.vhd,vhdl,xil_defaultlib,../../../../rocket_v0.1.srcs/sources_1/ip/axi_uartlite_0/sim/axi_uartlite_0.vhd,
+glbl.v,Verilog,xil_defaultlib,glbl.v

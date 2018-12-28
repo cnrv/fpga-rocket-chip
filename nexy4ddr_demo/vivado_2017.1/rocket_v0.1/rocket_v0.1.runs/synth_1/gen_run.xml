@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1546016133">
+  <File Type="VDS-TIMING-PB" Name="rocketTop_timing_summary_synth.pb"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="rocketTop_timing_summary_synth.rpt"/>
+  <File Type="RDS-DCP" Name="rocketTop.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="rocketTop_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="rocketTop_utilization_synth.rpt"/>
+  <File Type="RDS-PROPCONSTRS" Name="rocketTop_drc_synth.rpt"/>
+  <File Type="RDS-RDS" Name="rocketTop.vds"/>
+  <File Type="PA-TCL" Name="rocketTop.tcl"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/AsyncResetReg.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/AsyncResetReg.v"/>
+        <Attr Name="ImportTime" Val="1544165928"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/EICG_wrapper.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/EICG_wrapper.v"/>
+        <Attr Name="ImportTime" Val="1544165928"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/components_DefaultFPGAConfig.behav_srams.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/components_DefaultFPGAConfig.behav_srams.v"/>
+        <Attr Name="ImportTime" Val="1545877364"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/components_DefaultFPGAConfig.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/components_DefaultFPGAConfig.v"/>
+        <Attr Name="ImportTime" Val="1545877953"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/plusarg_reader.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/plusarg_reader.v"/>
+        <Attr Name="ImportTime" Val="1544165928"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/peripheral/AXIMem.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/peripheral/AXIMem.sv"/>
+        <Attr Name="ImportTime" Val="1545967094"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/peripheral/AXIMmio.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/peripheral/AXIMmio.sv"/>
+        <Attr Name="ImportTime" Val="1545967654"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/peripheral/DTModule.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/peripheral/DTModule.sv"/>
+        <Attr Name="ImportTime" Val="1545967191"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/utils/nasti_lite_bridge.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/utils/nasti_lite_bridge.sv"/>
+        <Attr Name="ImportTime" Val="1545967647"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/nasti/nasti_request.vh">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../lowrisc-chip/socip/nasti/nasti_request.vh"/>
+        <Attr Name="ImportTime" Val="1537841121"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/utils/nasti_lite_reader.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/utils/nasti_lite_reader.sv"/>
+        <Attr Name="ImportTime" Val="1545967650"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/utils/nasti_lite_writer.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/utils/nasti_lite_writer.sv"/>
+        <Attr Name="ImportTime" Val="1545966768"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rocket_neutrino/rocketTop.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/rocketTop.v"/>
+        <Attr Name="ImportTime" Val="1545967134"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="rocketTop"/>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PSRCDIR/constrs_1/imports/rocket_neutrino/pinMap.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Desktop/rocket_neutrino/pinMap.xdc"/>
+        <Attr Name="ImportTime" Val="1546009087"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2017"/>
+    <Step Id="synth_design"/>
+  </Strategy>
+  <BlockFileSet Type="BlockSrcs" Name="axi_uartlite_0"/>
+</GenRun>
