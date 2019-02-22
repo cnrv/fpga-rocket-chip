@@ -1,3 +1,7 @@
 [submodule "rocket-chip"]
 	path = rocket-chip
 	url = https://github.com/cnrv/rocket-chip.git
+
+[submodule "rocket_trans"]
+	path = rocket_trans
+	url = https://github.com/NeutrinoLiu/rocket_trans.git
