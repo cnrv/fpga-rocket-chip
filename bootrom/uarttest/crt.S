@@ -1,4 +1,4 @@
-#define STACK_POSITION 0x60010300
+
   .text
   .globl _start
 _start:
@@ -35,7 +35,8 @@ _start:
   li  x30,0
   li  x31,0
 
-  li sp, STACK_POSITION
+  li sp, 0x60010300
+  //stack at 60010300
 
   jal main
 

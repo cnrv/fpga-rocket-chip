@@ -62,7 +62,6 @@ module uart(
     wire            lite_b_ready;        
     
     wire [3:0] uart_axi4_w_strb_half; // quite strange the strategy of strb, since we shrink the width from 64 to 32 , we choose that valid half of the strb.
-    
     assign uart_axi4_w_strb_half = (uart_axi4_w_strb[7:4] == 0)? uart_axi4_w_strb[3:0]:uart_axi4_w_strb[7:4];
 
     nasti_lite_bridge bridge_inst (

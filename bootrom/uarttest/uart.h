@@ -4,10 +4,12 @@
 #define UART_HEADER_H
 
 #include <stdint.h>
-#include "mem_map.h"
+#define DEV_MAP__io_ext_uart__BASE 0x60000000
 
-#ifdef MEM_MAP_UART_BASE
-  #define UART_BASE ((uint32_t)(MEM_MAP_UART_BASE | 0x1000))
+// Xilinx AXI_UART 16550
+
+#ifdef DEV_MAP__io_ext_uart__BASE
+  #define UART_BASE ((uint32_t)(DEV_MAP__io_ext_uart__BASE | 0x1000))
 #else
   #define UART_BASE 0
 #endif
