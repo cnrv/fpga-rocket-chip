@@ -5,6 +5,7 @@ module AXIMem (
       input clock,		
       input clock200, // 200m Hz to drive DDR ctrl
       input reset,    
+      input reset200,
     
       output        io_axi4_0_aw_ready, 
       input         io_axi4_0_aw_valid, 
@@ -12,7 +13,13 @@ module AXIMem (
       input  [31:0] io_axi4_0_aw_addr, 
       input  [7:0]  io_axi4_0_aw_len, 
       input  [2:0]  io_axi4_0_aw_size, 
-      input  [1:0]  io_axi4_0_aw_burst, 
+      input  [1:0]  io_axi4_0_aw_burst,
+
+      input          io_axi4_0_aw_lock,
+      input   [3:0]  io_axi4_0_aw_cache, 
+      input   [2:0]  io_axi4_0_aw_prot, 
+      input   [3:0]  io_axi4_0_aw_qos,
+
       output        io_axi4_0_w_ready, 
       input         io_axi4_0_w_valid, 
       input  [63:0] io_axi4_0_w_data, 
@@ -29,6 +36,12 @@ module AXIMem (
       input  [7:0]  io_axi4_0_ar_len, 
       input  [2:0]  io_axi4_0_ar_size, 
       input  [1:0]  io_axi4_0_ar_burst, 
+
+      input          io_axi4_0_ar_lock, 
+      input  [3:0]  io_axi4_0_ar_cache, 
+      input   [2:0]  io_axi4_0_ar_prot, 
+      input   [3:0]  io_axi4_0_ar_qos, 
+
       input         io_axi4_0_r_ready, 
       output        io_axi4_0_r_valid, 
       output [3:0]  io_axi4_0_r_id, 
@@ -50,7 +63,15 @@ module AXIMem (
       output        ddr_cke,
       output        ddr_cs_n,
       output  [1:0] ddr_dm,
-      output        ddr_odt
+      output        ddr_odt,
+      
+      //for debug
+      output s_ar_ready,
+      output s_aw_ready,
+      output s_w_ready,
+      output s_b_valid,
+      output s_r_valid,
+      output init_fin
   );
 
       wire resetn; 
@@ -65,10 +86,10 @@ module AXIMem (
       wire [7:0]    mig_axi4_aw_len;
       wire [2:0]    mig_axi4_aw_size;
       wire [1:0]    mig_axi4_aw_burst;
-      // wire [0:0]    mig_axi4_aw_lock;
-      // wire [3:0]    mig_axi4_aw_cache;
-      // wire [2:0]    mig_axi4_aw_prot;
-      // wire [3:0]    mig_axi4_aw_qos;
+      wire [0:0]    mig_axi4_aw_lock;
+      wire [3:0]    mig_axi4_aw_cache;
+      wire [2:0]    mig_axi4_aw_prot;
+      wire [3:0]    mig_axi4_aw_qos;
       wire          mig_axi4_aw_valid;
       wire          mig_axi4_aw_ready;
       wire [63:0]   mig_axi4_w_data;
@@ -85,10 +106,10 @@ module AXIMem (
       wire [7:0]    mig_axi4_ar_len;
       wire [2:0]    mig_axi4_ar_size;
       wire [1:0]    mig_axi4_ar_burst;
-      // wire [0:0]    mig_axi4_ar_lock;
-      // wire [3:0]    mig_axi4_ar_cache;
-      // wire [2:0]    mig_axi4_ar_prot;
-      // wire [3:0]    mig_axi4_ar_qos;
+      wire [0:0]    mig_axi4_ar_lock;
+      wire [3:0]    mig_axi4_ar_cache;
+      wire [2:0]    mig_axi4_ar_prot;
+      wire [3:0]    mig_axi4_ar_qos;
       wire          mig_axi4_ar_valid;
       wire          mig_axi4_ar_ready;
       wire          mig_axi4_r_ready;
@@ -100,8 +121,8 @@ module AXIMem (
 
       wire [31:0]   io_axi4_0_aw_addr_shrink;
       wire [31:0]   io_axi4_0_ar_addr_shrink;
-      assign io_axi4_0_aw_addr_shrink = io_axi4_0_aw_addr & `DDR_MASK;
-      assign io_axi4_0_aw_addr_shrink = io_axi4_0_aw_addr & `DDR_MASK;
+      assign io_axi4_0_aw_addr_shrink = io_axi4_0_aw_addr[31:0] & `DDR_MASK;
+      assign io_axi4_0_ar_addr_shrink = io_axi4_0_ar_addr[31:0] & `DDR_MASK;
 
     axi_clock_converter_0 clk_conv(
 
@@ -116,10 +137,10 @@ module AXIMem (
       .s_axi_awlen    ( io_axi4_0_aw_len      ),
       .s_axi_awsize   ( io_axi4_0_aw_size     ),
       .s_axi_awburst  ( io_axi4_0_aw_burst    ),
-      // .s_axi_awlock   ( io_axi4_0_aw_lock     ),
-      // .s_axi_awcache  ( io_axi4_0_aw_cache    ),
-      // .s_axi_awprot   ( io_axi4_0_aw_prot     ),
-      // .s_axi_awqos    ( io_axi4_0_aw_qos      ),
+      .s_axi_awlock   ( io_axi4_0_aw_lock     ),
+      .s_axi_awcache  ( io_axi4_0_aw_cache    ),
+      .s_axi_awprot   ( io_axi4_0_aw_prot     ),
+      .s_axi_awqos    ( io_axi4_0_aw_qos      ),
       // .s_axi_awregion ( io_axi4_0_aw_region   ),
       .s_axi_awvalid  ( io_axi4_0_aw_valid    ),
       .s_axi_awready  ( io_axi4_0_aw_ready    ),
@@ -137,10 +158,10 @@ module AXIMem (
       .s_axi_arlen    ( io_axi4_0_ar_len      ),
       .s_axi_arsize   ( io_axi4_0_ar_size     ),
       .s_axi_arburst  ( io_axi4_0_ar_burst    ),
-      // .s_axi_arlock   ( io_axi4_0_ar_lock     ),
-      // .s_axi_arcache  ( io_axi4_0_ar_cache    ),
-      // .s_axi_arprot   ( io_axi4_0_ar_prot     ),
-      // .s_axi_arqos    ( io_axi4_0_ar_qos      ),
+      .s_axi_arlock   ( io_axi4_0_ar_lock     ),
+      .s_axi_arcache  ( io_axi4_0_ar_cache    ),
+      .s_axi_arprot   ( io_axi4_0_ar_prot     ),
+      .s_axi_arqos    ( io_axi4_0_ar_qos      ),
       // .s_axi_arregion ( io_axi4_0_ar_region   ),
       .s_axi_arvalid  ( io_axi4_0_ar_valid    ),
       .s_axi_arready  ( io_axi4_0_ar_ready    ),
@@ -156,10 +177,10 @@ module AXIMem (
       .m_axi_awlen    ( mig_axi4_aw_len     ),
       .m_axi_awsize   ( mig_axi4_aw_size    ),
       .m_axi_awburst  ( mig_axi4_aw_burst   ),
-      // .m_axi_awlock   ( mig_axi4_aw_lock    ),
-      // .m_axi_awcache  ( mig_axi4_aw_cache   ),
-      // .m_axi_awprot   ( mig_axi4_aw_prot    ),
-      // .m_axi_awqos    ( mig_axi4_aw_qos     ),
+      .m_axi_awlock   ( mig_axi4_aw_lock    ),
+      .m_axi_awcache  ( mig_axi4_aw_cache   ),
+      .m_axi_awprot   ( mig_axi4_aw_prot    ),
+      .m_axi_awqos    ( mig_axi4_aw_qos     ),
       // .m_axi_awregion ( mig_axi4_aw_region  ),
       .m_axi_awvalid  ( mig_axi4_aw_valid   ),
       .m_axi_awready  ( mig_axi4_aw_ready   ),
@@ -177,10 +198,10 @@ module AXIMem (
       .m_axi_arlen    ( mig_axi4_ar_len     ),
       .m_axi_arsize   ( mig_axi4_ar_size    ),
       .m_axi_arburst  ( mig_axi4_ar_burst   ),
-      // .m_axi_arlock   ( mig_axi4_ar_lock    ),
-      // .m_axi_arcache  ( mig_axi4_ar_cache   ),
-      // .m_axi_arprot   ( mig_axi4_ar_prot    ),
-      // .m_axi_arqos    ( mig_axi4_ar_qos     ),
+      .m_axi_arlock   ( mig_axi4_ar_lock    ),
+      .m_axi_arcache  ( mig_axi4_ar_cache   ),
+      .m_axi_arprot   ( mig_axi4_ar_prot    ),
+      .m_axi_arqos    ( mig_axi4_ar_qos     ),
       // .m_axi_arregion ( mig_axi4_ar_region  ),
       .m_axi_arvalid  ( mig_axi4_ar_valid   ),
       .m_axi_arready  ( mig_axi4_ar_ready   ),
@@ -212,7 +233,7 @@ module AXIMem (
       .ddr2_odt       ( ddr_odt     ),
 
       .sys_clk_i      ( clock200	),
-      .sys_rst        ( reset       ),
+      .sys_rst        ( reset200    ),
 
       .device_temp_i  ( 0           ),  // we do not need XADC just ground it       
       .app_sr_req     ( 1'b0        ),  // ddr control bits, all should be zero
@@ -221,19 +242,19 @@ module AXIMem (
 
       .ui_clk         ( mig_ui_clk  ),  // output  clk - for clk converter  
       .ui_clk_sync_rst( mig_ui_rst  ),  // output  reset
-      // .mmcm_locked    ( resetn      ), // there is an inplaced MMCM inside but we do not use it
+      //.mmcm_locked    ( mmcm_locked       ), 
 
       // axi interface with much higher freq
-      .aresetn        ( resetn	          ), // AXI reset send from top                                                     
+      .aresetn        ( resetn  	      ), //                                                    
       .s_axi_awid     ( mig_axi4_aw_id    ),
       .s_axi_awaddr   ( mig_axi4_aw_addr  ),
       .s_axi_awlen    ( mig_axi4_aw_len   ),
       .s_axi_awsize   ( mig_axi4_aw_size  ),
       .s_axi_awburst  ( mig_axi4_aw_burst ),
-      // .s_axi_awlock   ( mig_axi4_aw_lock  ),//should be grounded
-      // .s_axi_awcache  ( mig_axi4_aw_cache ),
-      // .s_axi_awprot   ( mig_axi4_aw_prot  ),
-      // .s_axi_awqos    ( mig_axi4_aw_qos   ),
+      .s_axi_awlock   ( mig_axi4_aw_lock  ),//should be grounded
+      .s_axi_awcache  ( mig_axi4_aw_cache ),
+      .s_axi_awprot   ( mig_axi4_aw_prot  ),
+      .s_axi_awqos    ( mig_axi4_aw_qos   ),
       .s_axi_awvalid  ( mig_axi4_aw_valid ),
       .s_axi_awready  ( mig_axi4_aw_ready ),
       .s_axi_wdata    ( mig_axi4_w_data   ),
@@ -250,10 +271,10 @@ module AXIMem (
       .s_axi_arlen    ( mig_axi4_ar_len   ),
       .s_axi_arsize   ( mig_axi4_ar_size  ),
       .s_axi_arburst  ( mig_axi4_ar_burst ),
-      // .s_axi_arlock   ( mig_axi4_ar_lock  ),//should be grounded
-      // .s_axi_arcache  ( mig_axi4_ar_cache ),
-      // .s_axi_arprot   ( mig_axi4_ar_prot  ),
-      // .s_axi_arqos    ( mig_axi4_ar_qos   ),
+      .s_axi_arlock   ( mig_axi4_ar_lock  ),//should be grounded
+      .s_axi_arcache  ( mig_axi4_ar_cache ),
+      .s_axi_arprot   ( mig_axi4_ar_prot  ),
+      .s_axi_arqos    ( mig_axi4_ar_qos   ),
       .s_axi_arvalid  ( mig_axi4_ar_valid ),
       .s_axi_arready  ( mig_axi4_ar_ready ),
       .s_axi_rid      ( mig_axi4_r_id     ),
@@ -261,8 +282,16 @@ module AXIMem (
       .s_axi_rresp    ( mig_axi4_r_resp   ),
       .s_axi_rlast    ( mig_axi4_r_last   ),
       .s_axi_rvalid   ( mig_axi4_r_valid  ),
-      .s_axi_rready   ( mig_axi4_r_ready  )
-              
+      .s_axi_rready   ( mig_axi4_r_ready  ),
+      
+      .init_calib_complete (init_fin)             
     );
+    
+        // for debug
+    assign s_aw_ready = mig_axi4_aw_ready; 
+    assign s_ar_ready = mig_axi4_ar_ready;
+    assign s_w_ready = mig_axi4_w_ready;
+    assign s_b_valid = mig_axi4_b_valid;
+    assign s_r_valid = mig_axi4_r_valid;
       
 endmodule

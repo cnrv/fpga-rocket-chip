@@ -1,6 +1,6 @@
 all: program.txt bootrom.hex 
 
-bootrom.elf: linker.ld crt.S test.c uart.c 
+bootrom.elf: linker.ld crt.S test.c uart.c
 	riscv64-unknown-elf-gcc -nostdlib -static -T linker.ld crt.S test.c uart.c -o $@ 
 
 program.txt: bootrom.elf
@@ -11,3 +11,9 @@ bootrom.bin: bootrom.elf
 
 bootrom.hex: bootrom.bin
 	od -t x8 -An -w8 -v $< > $@ && cp $@ .. && rm  bootrom.bin
+
+clean:
+	rm bootrom.hex bootrom.elf program.txt
+
+refresh:
+	make clean && make all

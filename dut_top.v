@@ -26,9 +26,8 @@ module rocketTop(
   
   // position for peris ... TBA
 );
-  wire  reset;
-  wire  resetn;
-  wire  clock; //30m
+
+  wire  clock30; //30m
   wire  clock200; //200m
   
   //dut wires
@@ -176,6 +175,12 @@ module rocketTop(
   wire [7:0] mem_io_axi4_0_aw_len; 
   wire [2:0] mem_io_axi4_0_aw_size; 
   wire [1:0] mem_io_axi4_0_aw_burst; 
+  // add 4 signal
+  wire  mem_io_axi4_0_aw_lock; 
+  wire [3:0] mem_io_axi4_0_aw_cache; 
+  wire [2:0] mem_io_axi4_0_aw_prot; 
+  wire [3:0] mem_io_axi4_0_aw_qos; 
+  //
   wire  mem_io_axi4_0_w_ready; 
   wire  mem_io_axi4_0_w_valid; 
   wire [63:0] mem_io_axi4_0_w_data; 
@@ -192,6 +197,12 @@ module rocketTop(
   wire [7:0] mem_io_axi4_0_ar_len; 
   wire [2:0] mem_io_axi4_0_ar_size; 
   wire [1:0] mem_io_axi4_0_ar_burst; 
+  // add 4 signal
+  wire  mem_io_axi4_0_ar_lock; 
+  wire [3:0] mem_io_axi4_0_ar_cache; 
+  wire [2:0] mem_io_axi4_0_ar_prot; 
+  wire [3:0] mem_io_axi4_0_ar_qos; 
+  //
   wire  mem_io_axi4_0_r_ready; 
   wire  mem_io_axi4_0_r_valid; 
   wire [3:0] mem_io_axi4_0_r_id; 
@@ -243,33 +254,27 @@ module rocketTop(
   wire [31:0] SimDTM_debug_resp_data; 
   wire [1:0] SimDTM_debug_resp_resp; 
   wire  SimDTM_reset; 
-  wire  SimDTM_clk; 
-
+  wire  SimDTM_clock; 
+  
+  //for debug
+  wire ddr_init_fine;
+  wire awr;
+  wire arr;
+  wire wr;
+  wire bvalid;
+  wire rvalid;
+  
   wire  pll_locked;
- 
+  assign reset = ~ pll_locked;
   clk_wiz_0 clk_gen(
     .clk_in1(clock100),//100m
-    .clk_out1(clock),   //30m
+    .clk_out1(clock30),   //30m
     .clk_out2(clock200), //200m
     .resetn(buttonresetn),
-    .locked(pll_locked)
+    .locked(pll_locked) // we use pll locked signal as resetn for ddr ctrl.
   );
-  
-  reg [7:0] rstcounter;
-  // real reset generation, updated 
-  always @(posedge clock100)
-  begin
-    if (! buttonresetn) 
-        rstcounter <= 8'd255;
-    else
-        rstcounter <= (pll_locked)? ((rstcounter == 0)? 0: (rstcounter -8'd1)):rstcounter;
-  end
- 
-  assign reset =  (!(rstcounter == 0) && (pll_locked));
-  assign resetn = ~ reset;
-  // real reset generation end
+    
 
-  
   ExampleRocketSystem dut ( 
       .clock(dut_clock),
       .reset(dut_reset),
@@ -404,6 +409,7 @@ module rocketTop(
     .clock(mem_clock),
     .clock200(clock200), // DDR driver 200MHz
     .reset(mem_reset),
+    .reset200(reset),
 
     .io_axi4_0_aw_ready(mem_io_axi4_0_aw_ready),
     .io_axi4_0_aw_valid(mem_io_axi4_0_aw_valid),
@@ -412,6 +418,12 @@ module rocketTop(
     .io_axi4_0_aw_len(mem_io_axi4_0_aw_len),
     .io_axi4_0_aw_size(mem_io_axi4_0_aw_size),
     .io_axi4_0_aw_burst(mem_io_axi4_0_aw_burst),
+    // add 4 signals
+    .io_axi4_0_aw_lock(mem_io_axi4_0_aw_lock),
+    .io_axi4_0_aw_qos(mem_io_axi4_0_aw_qos),
+    .io_axi4_0_aw_prot(mem_io_axi4_0_aw_prot),
+    .io_axi4_0_aw_cache(mem_io_axi4_0_aw_cache),
+    //
     .io_axi4_0_w_ready(mem_io_axi4_0_w_ready),
     .io_axi4_0_w_valid(mem_io_axi4_0_w_valid),
     .io_axi4_0_w_data(mem_io_axi4_0_w_data),
@@ -428,6 +440,12 @@ module rocketTop(
     .io_axi4_0_ar_len(mem_io_axi4_0_ar_len),
     .io_axi4_0_ar_size(mem_io_axi4_0_ar_size),
     .io_axi4_0_ar_burst(mem_io_axi4_0_ar_burst),
+    // add 4 signals
+    .io_axi4_0_ar_lock(mem_io_axi4_0_ar_lock),
+    .io_axi4_0_ar_qos(mem_io_axi4_0_ar_qos),
+    .io_axi4_0_ar_prot(mem_io_axi4_0_ar_prot),
+    .io_axi4_0_ar_cache(mem_io_axi4_0_ar_cache),
+    //
     .io_axi4_0_r_ready(mem_io_axi4_0_r_ready),
     .io_axi4_0_r_valid(mem_io_axi4_0_r_valid),
     .io_axi4_0_r_id(mem_io_axi4_0_r_id),
@@ -449,7 +467,15 @@ module rocketTop(
     .ddr_cke (ddr_cke),
     .ddr_cs_n (ddr_cs_n),
     .ddr_dm (ddr_dm),
-    .ddr_odt (ddr_odt)
+    .ddr_odt (ddr_odt),
+    
+    // for debug
+    .init_fin(ddr_init_fin),
+    .s_aw_ready(awr),
+    .s_ar_ready(arr),
+    .s_w_ready(wr),
+    .s_b_valid(bvalid),
+    .s_r_valid(rvalid)
   );
   
   AXIMmio mmio ( 
@@ -495,19 +521,16 @@ module rocketTop(
   
   assign LED[13] = uart_TX;
   assign LED[12] = uart_RX;
-  assign LED[11] = rstcounter[0];
-  assign LED[10] = pll_locked;
-  assign LED[9] =  mmio_io_axi4_0_w_ready;
-  assign LED[8] =  mmio_io_axi4_0_w_valid;
-  assign LED[7:0] = mmio_io_axi4_0_w_data[7:0];
-   
-  //////////////////////////////////debug
   
-  //////////////////////////////////debug
-    
   assign LED[15] = dut_reset;
   assign LED[14] = dut_clock;
-      
+  
+  assign LED[5] = rvalid;
+  assign LED[4] = bvalid;
+  assign LED[2] = arr;
+  assign LED[3] = wr;
+  assign LED[1] = awr;
+  assign LED[0] = ddr_init_fin;    
   //////////////////////////////////debug
   
   
@@ -522,22 +545,22 @@ module rocketTop(
     .debug_resp_data(SimDTM_debug_resp_data),
     .debug_resp_resp(SimDTM_debug_resp_resp),
     .reset(SimDTM_reset),
-    .clk(SimDTM_clk)
+    .clk(SimDTM_clock)
   );
   
 
   //-------------------------connect all the module together
 
-  assign dut_clock = clock; 
+  assign dut_clock = clock30; 
   assign dut_reset = reset | dut_debug_ndreset; 
   assign dut_interrupts = 2'h0; 
-  assign dut_debug_clockeddmi_dmiClock = clock; 
+  assign dut_debug_clockeddmi_dmiClock = clock30; 
   assign dut_debug_clockeddmi_dmiReset = reset; 
 
   //  ***** debug module *****
   // CR inheritance
   assign SimDTM_reset = reset; 
-  assign SimDTM_clk = clock; 
+  assign SimDTM_clock = clock30; 
   //  drived by outside module
   assign dut_debug_clockeddmi_dmi_req_valid = SimDTM_debug_req_valid;
   assign dut_debug_clockeddmi_dmi_req_addr = SimDTM_debug_req_addr;
@@ -553,7 +576,7 @@ module rocketTop(
 
   //  ***** mem module *****
   // CR inheritance
-  assign mem_clock = clock; 
+  assign mem_clock = clock30; 
   assign mem_reset = reset; 
   //  drived by outside module
   assign dut_mem_axi4_0_aw_ready = mem_io_axi4_0_aw_ready; 
@@ -574,6 +597,12 @@ module rocketTop(
   assign mem_io_axi4_0_aw_len = dut_mem_axi4_0_aw_len; 
   assign mem_io_axi4_0_aw_size = dut_mem_axi4_0_aw_size; 
   assign mem_io_axi4_0_aw_burst = dut_mem_axi4_0_aw_burst; 
+  // add 4 signals
+  assign mem_io_axi4_0_aw_lock = dut_mem_axi4_0_aw_lock; 
+  assign mem_io_axi4_0_aw_prot = dut_mem_axi4_0_aw_prot; 
+  assign mem_io_axi4_0_aw_qos = dut_mem_axi4_0_aw_qos; 
+  assign mem_io_axi4_0_aw_cache = dut_mem_axi4_0_aw_cache; 
+  //
   assign mem_io_axi4_0_w_valid = dut_mem_axi4_0_w_valid; 
   assign mem_io_axi4_0_w_data = dut_mem_axi4_0_w_data; 
   assign mem_io_axi4_0_w_strb = dut_mem_axi4_0_w_strb; 
@@ -585,12 +614,18 @@ module rocketTop(
   assign mem_io_axi4_0_ar_len = dut_mem_axi4_0_ar_len; 
   assign mem_io_axi4_0_ar_size = dut_mem_axi4_0_ar_size; 
   assign mem_io_axi4_0_ar_burst = dut_mem_axi4_0_ar_burst; 
+  // add 4 signals
+  assign mem_io_axi4_0_ar_lock = dut_mem_axi4_0_ar_lock; 
+  assign mem_io_axi4_0_ar_prot = dut_mem_axi4_0_ar_prot; 
+  assign mem_io_axi4_0_ar_qos = dut_mem_axi4_0_ar_qos; 
+  assign mem_io_axi4_0_ar_cache = dut_mem_axi4_0_ar_cache; 
+  //
   assign mem_io_axi4_0_r_ready = dut_mem_axi4_0_r_ready; 
-
+  
 
   //  ***** mmio module *****
   // CR inheritance 
-  assign mmio_clock = clock; 
+  assign mmio_clock = clock30; 
   assign mmio_reset = reset; 
   //  drived by outside module
   assign dut_mmio_axi4_0_aw_ready = mmio_io_axi4_0_aw_ready; 
