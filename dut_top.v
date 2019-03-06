@@ -22,7 +22,14 @@ module rocketTop(
   output        ddr_cke,
   output        ddr_cs_n,
   output  [1:0] ddr_dm,
-  output        ddr_odt
+  output        ddr_odt,
+  
+  //----SD on spi
+  inout         spi_cs,
+  inout         spi_sclock,
+  inout         spi_mosi,
+  inout         spi_miso,
+  output        sd_power
   
   // position for peris ... TBA
 );
@@ -256,13 +263,14 @@ module rocketTop(
   wire  SimDTM_reset; 
   wire  SimDTM_clock; 
   
-  //for debug
+  /////////////////////////////////////////////////for debug
   wire ddr_init_fine;
   wire awr;
   wire arr;
   wire wr;
   wire bvalid;
   wire rvalid;
+  //////////////////////////////////////////////////
   
   wire  pll_locked;
   assign reset = ~ pll_locked;
@@ -514,7 +522,13 @@ module rocketTop(
     
     //HW devices' pins
     .uart_TX(uart_TX),
-    .uart_RX(uart_RX)
+    .uart_RX(uart_RX),
+
+    .spi_cs(spi_cs),
+    .spi_sclock(spi_sclock),
+    .spi_mosi(spi_mosi),
+    .spi_miso(spi_miso),
+    .sd_power(sd_power)
   );
   
   //////////////////////////////////debug

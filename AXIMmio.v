@@ -5,6 +5,12 @@
    input uart_RX,
    output uart_TX,
 
+   inout         spi_cs,
+   inout         spi_sclock,
+   inout         spi_mosi,
+   inout         spi_miso,
+   output        sd_power,
+
    output        io_axi4_0_aw_ready, 
    input         io_axi4_0_aw_valid, 
    input  [3:0]  io_axi4_0_aw_id, 
@@ -214,17 +220,48 @@
        );
 
    //TBA for the SPI-SD based at 0x60020000, a lesson is "ground all your unused signals", or the stupid vivado simulator will go insane 
+    
+    spi spi_inst(
 
-    assign peribundle_axi4_aw_ready[2]     = 0 ;
-    assign peribundle_axi4_w_ready[2]      = 0 ;
-    assign peribundle_axi4_b_valid[2]      = 0 ;
-    assign peribundle_axi4_b_id[11:8]      = 0 ;
-    assign peribundle_axi4_b_resp[5:4]     = 0 ;
-    assign peribundle_axi4_ar_ready[2]     = 0 ;
-    assign peribundle_axi4_r_valid[2]      = 0 ;
-    assign peribundle_axi4_r_id[11:8]      = 0 ;
-    assign peribundle_axi4_r_data[191:128] = 0 ;
-    assign peribundle_axi4_r_resp[5:4]     = 0 ;
-    assign peribundle_axi4_r_last[2]       = 0 ;
+       .spi_axi4_aw_ready (peribundle_axi4_aw_ready[2]    ),
+       .spi_axi4_aw_valid (peribundle_axi4_aw_valid[2]    ),
+       .spi_axi4_aw_id    (peribundle_axi4_aw_id[11:8]     ),
+       .spi_axi4_aw_addr  (peribundle_axi4_aw_addr[92:62] ),
+       .spi_axi4_aw_len   (peribundle_axi4_aw_len[23:16]   ),
+       .spi_axi4_aw_size  (peribundle_axi4_aw_size[8:6]   ),
+       .spi_axi4_aw_burst (peribundle_axi4_aw_burst[5:4]  ),
+       .spi_axi4_w_ready  (peribundle_axi4_w_ready[2]     ),
+       .spi_axi4_w_valid  (peribundle_axi4_w_valid[2]     ),
+       .spi_axi4_w_data   (peribundle_axi4_w_data[191:128] ),
+       .spi_axi4_w_strb   (peribundle_axi4_w_strb[23:16]   ),
+       .spi_axi4_w_last   (peribundle_axi4_w_last[2]      ),
+       .spi_axi4_b_ready  (peribundle_axi4_b_ready[2]     ),
+       .spi_axi4_b_valid  (peribundle_axi4_b_valid[2]     ),
+       .spi_axi4_b_id     (peribundle_axi4_b_id[11:8]      ),
+       .spi_axi4_b_resp   (peribundle_axi4_b_resp[5:4]    ),
+       .spi_axi4_ar_ready (peribundle_axi4_ar_ready[2]    ),
+       .spi_axi4_ar_valid (peribundle_axi4_ar_valid[2]    ),
+       .spi_axi4_ar_id    (peribundle_axi4_ar_id[11:8]     ),
+       .spi_axi4_ar_addr  (peribundle_axi4_ar_addr[92:62] ),
+       .spi_axi4_ar_len   (peribundle_axi4_ar_len[23:16]   ),
+       .spi_axi4_ar_size  (peribundle_axi4_ar_size[8:6]   ),
+       .spi_axi4_ar_burst (peribundle_axi4_ar_burst[5:4]  ),
+       .spi_axi4_r_ready  (peribundle_axi4_r_ready[2]     ),
+       .spi_axi4_r_valid  (peribundle_axi4_r_valid[2]     ),
+       .spi_axi4_r_id     (peribundle_axi4_r_id[11:8]      ),
+       .spi_axi4_r_data   (peribundle_axi4_r_data[191:128] ),
+       .spi_axi4_r_resp   (peribundle_axi4_r_resp[5:4]    ),
+       .spi_axi4_r_last   (peribundle_axi4_r_last[2]      ),
+
+       .clock(clock),
+       .resetn(resetn),
+
+       .spi_mosi(spi_mosi),
+       .spi_miso(spi_miso),
+       .spi_sclock(spi_sclock),
+       .spi_cs(spi_cs),
+       .sd_poweroff(sd_power)
+
+      );
 
 endmodule
