@@ -8,7 +8,6 @@ module dut_top_tb ;
     wire uartTX;
     wire uartRX;
 
-  parameter SIM_BYPASS_INIT_CAL = "FAST";
   wire [15:0] ddr_dq;
   wire  [1:0] ddr_dqs_n;
   wire  [1:0] ddr_dqs_p;
@@ -23,6 +22,8 @@ module dut_top_tb ;
   wire        ddr_cs_n;
   wire  [1:0] ddr_dm;
   wire        ddr_odt;
+
+  parameter SIM_BYPASS_INIT_CAL = "FAST";
 
   	rocketTop dut_inst(
 
@@ -46,7 +47,6 @@ module dut_top_tb ;
      .ddr_cs_n(ddr_cs_n),
      .ddr_dm(ddr_dm),
      .ddr_odt(ddr_odt)
-
 
   		);
      ddr2_model ddr2_model(

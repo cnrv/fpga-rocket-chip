@@ -21,41 +21,8 @@ void uart_init() {
   *(uart_base_ptr + UART_IER) = 0x0001u;
 
   // print "uart is working ..."
-
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000075;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000061;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000072;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000074;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000020;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000069;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000073;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000020;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000077;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x0000006f;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000072;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x0000006b;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000069;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x0000006e;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x00000067;
-    while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
-  *(uart_base_ptr + UART_THR) = 0x0000000a;
-
-  //
+  //uart_demo();
+  
 
 }
 

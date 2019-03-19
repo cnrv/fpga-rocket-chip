@@ -1,4 +1,7 @@
-module rocketTop( 
+`timescale 1ns/1ps
+`define SIM_ENABLE_DDR
+module rocketTop 
+( 
   input   clock100, 
   input   buttonresetn,
   
@@ -29,7 +32,7 @@ module rocketTop(
   inout         spi_sclock,
   inout         spi_mosi,
   inout         spi_miso,
-  output        sd_power
+  output        sd_poweroff
   
   // position for peris ... TBA
 );
@@ -263,14 +266,14 @@ module rocketTop(
   wire  SimDTM_reset; 
   wire  SimDTM_clock; 
   
-  /////////////////////////////////////////////////for debug
-  wire ddr_init_fine;
-  wire awr;
-  wire arr;
-  wire wr;
-  wire bvalid;
-  wire rvalid;
-  //////////////////////////////////////////////////
+//  /////////////////////////////////////////////////for debug
+//  wire ddr_init_fine;
+//  wire awr;
+//  wire arr;
+//  wire wr;
+//  wire bvalid;
+//  wire rvalid;
+//  //////////////////////////////////////////////////
   
   wire  pll_locked;
   assign reset = ~ pll_locked;
@@ -412,12 +415,12 @@ module rocketTop(
       .l2_frontend_bus_axi4_0_r_bits_resp(dut_l2_frontend_bus_axi4_0_r_resp),
       .l2_frontend_bus_axi4_0_r_bits_last(dut_l2_frontend_bus_axi4_0_r_last)
     );
-  
+
+`ifdef SIM_ENABLE_DDR
   AXIMem mem ( 
     .clock(mem_clock),
     .clock200(clock200), // DDR driver 200MHz
     .reset(mem_reset),
-    .reset200(reset),
 
     .io_axi4_0_aw_ready(mem_io_axi4_0_aw_ready),
     .io_axi4_0_aw_valid(mem_io_axi4_0_aw_valid),
@@ -475,16 +478,29 @@ module rocketTop(
     .ddr_cke (ddr_cke),
     .ddr_cs_n (ddr_cs_n),
     .ddr_dm (ddr_dm),
-    .ddr_odt (ddr_odt),
-    
-    // for debug
-    .init_fin(ddr_init_fin),
-    .s_aw_ready(awr),
-    .s_ar_ready(arr),
-    .s_w_ready(wr),
-    .s_b_valid(bvalid),
-    .s_r_valid(rvalid)
+    .ddr_odt (ddr_odt)
+//    // for debug
+//    .init_fin(ddr_init_fin),
+//    .s_aw_ready(awr),
+//    .s_ar_ready(arr),
+//    .s_w_ready(wr),
+//    .s_b_valid(bvalid),
+//    .s_r_valid(rvalid)
   );
+`else
+    assign mem_io_axi4_0_aw_ready   = 0;
+    assign mem_io_axi4_0_w_ready    = 0;
+    assign mem_io_axi4_0_b_valid    = 0;
+    assign mem_io_axi4_0_b_id       = 0;
+    assign mem_io_axi4_0_b_resp     = 0;
+    assign mem_io_axi4_0_ar_ready   = 0;
+    assign mem_io_axi4_0_r_valid    = 0;
+    assign mem_io_axi4_0_r_id       = 0;
+    assign mem_io_axi4_0_r_data     = 0;
+    assign mem_io_axi4_0_r_resp     = 0;
+    assign mem_io_axi4_0_r_last     = 0;
+`endif
+
   
   AXIMmio mmio ( 
     .clock(mmio_clock),
@@ -528,7 +544,7 @@ module rocketTop(
     .spi_sclock(spi_sclock),
     .spi_mosi(spi_mosi),
     .spi_miso(spi_miso),
-    .sd_power(sd_power)
+    .sd_poweroff(sd_poweroff)
   );
   
   //////////////////////////////////debug
@@ -539,12 +555,11 @@ module rocketTop(
   assign LED[15] = dut_reset;
   assign LED[14] = dut_clock;
   
-  assign LED[5] = rvalid;
-  assign LED[4] = bvalid;
-  assign LED[2] = arr;
-  assign LED[3] = wr;
-  assign LED[1] = awr;
-  assign LED[0] = ddr_init_fin;    
+  assign LED[4] = spi_miso;
+  assign LED[3] = spi_mosi;
+  assign LED[2] = spi_sclock;
+  assign LED[1] = spi_cs;
+  assign LED[0] = sd_poweroff;    
   //////////////////////////////////debug
   
   
@@ -563,7 +578,7 @@ module rocketTop(
   );
   
 
-  //-------------------------connect all the module together
+  //-------------------------connect all the module together---- very verbose by Chisel generated, I will change it later
 
   assign dut_clock = clock30; 
   assign dut_reset = reset | dut_debug_ndreset; 

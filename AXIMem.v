@@ -5,7 +5,6 @@ module AXIMem (
       input clock,		
       input clock200, // 200m Hz to drive DDR ctrl
       input reset,    
-      input reset200,
     
       output        io_axi4_0_aw_ready, 
       input         io_axi4_0_aw_valid, 
@@ -63,15 +62,15 @@ module AXIMem (
       output        ddr_cke,
       output        ddr_cs_n,
       output  [1:0] ddr_dm,
-      output        ddr_odt,
+      output        ddr_odt
       
-      //for debug
-      output s_ar_ready,
-      output s_aw_ready,
-      output s_w_ready,
-      output s_b_valid,
-      output s_r_valid,
-      output init_fin
+//      //for debug
+//      output s_ar_ready,
+//      output s_aw_ready,
+//      output s_w_ready,
+//      output s_b_valid,
+//      output s_r_valid,
+//      output init_fin
   );
 
       wire resetn; 
@@ -233,7 +232,7 @@ module AXIMem (
       .ddr2_odt       ( ddr_odt     ),
 
       .sys_clk_i      ( clock200	),
-      .sys_rst        ( reset200    ),
+      .sys_rst        ( reset    ),
 
       .device_temp_i  ( 0           ),  // we do not need XADC just ground it       
       .app_sr_req     ( 1'b0        ),  // ddr control bits, all should be zero
@@ -271,7 +270,7 @@ module AXIMem (
       .s_axi_arlen    ( mig_axi4_ar_len   ),
       .s_axi_arsize   ( mig_axi4_ar_size  ),
       .s_axi_arburst  ( mig_axi4_ar_burst ),
-      .s_axi_arlock   ( mig_axi4_ar_lock  ),//should be grounded
+      .s_axi_arlock   ( mig_axi4_ar_lock  ),
       .s_axi_arcache  ( mig_axi4_ar_cache ),
       .s_axi_arprot   ( mig_axi4_ar_prot  ),
       .s_axi_arqos    ( mig_axi4_ar_qos   ),
@@ -288,10 +287,10 @@ module AXIMem (
     );
     
         // for debug
-    assign s_aw_ready = mig_axi4_aw_ready; 
-    assign s_ar_ready = mig_axi4_ar_ready;
-    assign s_w_ready = mig_axi4_w_ready;
-    assign s_b_valid = mig_axi4_b_valid;
-    assign s_r_valid = mig_axi4_r_valid;
+//    assign s_aw_ready = mig_axi4_aw_ready; 
+//    assign s_ar_ready = mig_axi4_ar_ready;
+//    assign s_w_ready = mig_axi4_w_ready;
+//    assign s_b_valid = mig_axi4_b_valid;
+//    assign s_r_valid = mig_axi4_r_valid;
       
 endmodule

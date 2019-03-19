@@ -9,7 +9,7 @@
    inout         spi_sclock,
    inout         spi_mosi,
    inout         spi_miso,
-   output        sd_power,
+   output        sd_poweroff,
 
    output        io_axi4_0_aw_ready, 
    input         io_axi4_0_aw_valid, 
@@ -260,7 +260,7 @@
        .spi_miso(spi_miso),
        .spi_sclock(spi_sclock),
        .spi_cs(spi_cs),
-       .sd_poweroff(sd_power)
+       .sd_poweroff(sd_poweroff)
 
       );
 

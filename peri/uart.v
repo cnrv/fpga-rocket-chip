@@ -35,8 +35,6 @@ module uart(
     input uart_RX,
     output uart_TX
 	);
-
-    assign uart_axi4_r_data[63:32] = uart_axi4_r_data[31:0];
     
     // provided ip is axilite, transform axi4 to axilite
     wire    [3:0]   lite_ar_id;          // be driven
@@ -61,11 +59,29 @@ module uart(
     wire            lite_b_valid;        
     wire            lite_b_ready;        
     
-    wire [3:0] uart_axi4_w_strb_half; // quite strange the strategy of strb, since we shrink the width from 64 to 32 , we choose that valid half of the strb.
-    assign uart_axi4_w_strb_half = (uart_axi4_w_strb[7:4] == 0)? uart_axi4_w_strb[3:0]:uart_axi4_w_strb[7:4];
-
-    nasti_lite_bridge bridge_inst (
+    wire [3:0] uart_axi4_w_strb_half;
+    wire [31:0] uart_axi4_w_data_half;
+    wire [31:0] uart_axi4_r_data_half; 
     
+    narrower uart_narrower(
+        .r_data_64  (uart_axi4_r_data),
+        .w_data_64  (uart_axi4_w_data),
+        .w_strb_8   (uart_axi4_w_strb),
+        .r_data_32  (uart_axi4_r_data_half),
+        .w_data_32  (uart_axi4_w_data_half),
+        .w_strb_4   (uart_axi4_w_strb_half)
+    );
+
+    nasti_lite_bridge #(    
+        .MAX_TRANSACTION(1),        // maximal number of parallel write transactions
+        .ID_WIDTH(4),               // id width
+        .ADDR_WIDTH(13),             // address width
+        .NASTI_DATA_WIDTH(32),      // width of data on the nasti side
+        .LITE_DATA_WIDTH(32),       // width of data on the nasti-lite side
+        .USER_WIDTH(1)    
+    )
+    bridge_inst 
+    (
     .clk    (clock),
     .rstn   (resetn),
     .lite_slave_ar_id          (lite_ar_id    ),
@@ -89,8 +105,7 @@ module uart(
     .lite_slave_b_resp         (lite_b_resp   ),
     .lite_slave_b_valid        (lite_b_valid  ),
     .lite_slave_b_ready        (lite_b_ready  ),
-    //// ATTENTION this may cause problems
-    // we gonna omit the high32 bit of a write request.
+
     .nasti_master_ar_id          (uart_axi4_ar_id    ),   
     .nasti_master_ar_addr        (uart_axi4_ar_addr[12:0]  ),   
     .nasti_master_ar_len         (uart_axi4_ar_len   ),   
@@ -99,7 +114,7 @@ module uart(
     .nasti_master_ar_valid       (uart_axi4_ar_valid ),   
     .nasti_master_ar_ready       (uart_axi4_ar_ready ),   
     .nasti_master_r_id           (uart_axi4_r_id     ),   
-    .nasti_master_r_data         (uart_axi4_r_data[31:0]   ),   
+    .nasti_master_r_data         (uart_axi4_r_data_half   ),   
     .nasti_master_r_resp         (uart_axi4_r_resp   ),   
     .nasti_master_r_last         (uart_axi4_r_last   ),   
     .nasti_master_r_valid        (uart_axi4_r_valid  ),   
@@ -111,7 +126,7 @@ module uart(
     .nasti_master_aw_burst       (uart_axi4_aw_burst ),
     .nasti_master_aw_valid       (uart_axi4_aw_valid ),
     .nasti_master_aw_ready       (uart_axi4_aw_ready ),
-    .nasti_master_w_data         (uart_axi4_w_data[31:0]   ), //// ATTENTION, this may cause problems, but it seems that AXI will copy the lower 32 bit data to the higher 32 ones, when send a 32bit data to 64bit bus
+    .nasti_master_w_data         (uart_axi4_w_data_half   ), 
     .nasti_master_w_strb         (uart_axi4_w_strb_half   ),
     .nasti_master_w_last         (uart_axi4_w_last   ),
     .nasti_master_w_valid        (uart_axi4_w_valid  ),

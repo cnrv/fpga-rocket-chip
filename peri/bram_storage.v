@@ -9,33 +9,36 @@ module bram_storage(
 
 	reg [63:0] bram [8191:0];
 	reg [63:0] outreg;
-	wire we;
+	wire[63:0] wmask;
 	
 	parameter BRAM_INIT_FILE = "bootrom.hex";
     initial begin
         if (BRAM_INIT_FILE != "")
             $readmemh(BRAM_INIT_FILE, bram);
     end
-
-    integer i;
-
-    /*read and display the values from the text file on screen*/ 
-
-    initial begin
-
-     for (i=0; i < 10; i=i+1)
-
-     $display("%d:%h",i,bram[i]);
-
-    end     
-
-    assign we = (we_perbyte == 0)? 0:1; //the interface is byte-wise enable signal, we do not care it. shrink into 1 bit signal
-
+    
+    // generate wmask according to we_perbyte
+    assign wmask[7:0] = we_perbyte[0] ? 8'hff:8'h00;
+    assign wmask[15:8] = we_perbyte[1] ? 8'hff:8'h00;
+    assign wmask[23:16] = we_perbyte[2] ? 8'hff:8'h00; 
+    assign wmask[31:24] = we_perbyte[3] ? 8'hff:8'h00;
+    assign wmask[39:32] = we_perbyte[4] ? 8'hff:8'h00;
+    assign wmask[47:40] = we_perbyte[5] ? 8'hff:8'h00;
+    assign wmask[55:48] = we_perbyte[6] ? 8'hff:8'h00;
+    assign wmask[63:56] = we_perbyte[7] ? 8'hff:8'h00;    
+ 
 	always @(posedge clock)
-	begin
- 	   bram[addr] <= (we && en) ? wdata:bram[addr];
-	   outreg <= (we || !en) ? 0:bram[addr];
-	end
+ 	    if (en)
+ 	   		outreg <= (!we_perbyte) ? bram[addr]: 0;
+ 	   	else
+ 	   		outreg <= 0;
+
+ 	always @(posedge clock)
+ 		if (en)
+ 			bram[addr] <= (~wmask & bram[addr]) | (wmask & wdata);
+ 		else 
+ 			bram[addr] <= bram[addr];
+
 	assign rdata = outreg;
 endmodule	
 	

@@ -1,0 +1,52 @@
+#include <stdint.h>
+#include "myprintf.h"
+void probReappear(uint8_t bit8,uint32_t bit32){
+    printf("8bit printf %d | uartsend ", bit8);
+    uart_send(bit8+'0');
+    printf("\n\r32bit printf %d | uartsend ", bit32);
+    uart_send(bit32+'0');
+}
+// volatile   uint32_t bit32;
+// volatile   uint8_t bit8;
+
+// void main(){
+//   uart_init();
+//   bit32 = 5;
+//   bit8 = 5;
+//   probReappear(bit8, bit32);
+//   // probReappear(0x35);
+//   // uart_send(bit8);
+//   // uart_send(0x35);
+// }
+
+volatile uint8_t k;
+volatile uint32_t l;
+
+void main(){
+  
+  uart_init();
+  uint8_t i; 
+  for (i=0; i<20; i++) printf("%d", i);
+  printf("\n\r", 0);
+
+  uint32_t j;
+  for (j=0; j<20; j++) printf("%d", j);
+  printf("\n\r", 0);
+
+  for (k=0; k<20; k++) printf("%d", k);
+  printf("\n\r", 0);
+
+  for (l=0; l<20; l++) printf("%d", l);
+  printf("\n\r", 0);
+
+  i=5;
+  j=5;
+  l=5;
+  k=5;
+  printf("-----\n\r", 0);
+  probReappear(i,j);
+  printf("\n\r-----\n\r", 0);
+  probReappear(k,l);
+
+
+}
