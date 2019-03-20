@@ -1,10 +1,11 @@
 // SD test program
 
-#include <stdio.h>
+#include <stddef.h>
 #include "diskio.h"
 #include "ff.h"
 #include "uart.h"
-
+#include "myprintf.h"
+#include "spi.h"
 /* Read a text file and display it */
 
 FATFS FatFs;   /* Work area (file system object) for logical drive */
@@ -18,20 +19,21 @@ int main (void)
   uint32_t i;
 
   uart_init();
-
+  int num = 0x7fff;
+  printf("uart start working, printf should be fine if 32767 = %d \n\r", num);
   /* Register work area to the default drive */
   if(f_mount(&FatFs, "", 1)) {
-    printf("Fail to mount SD driver!\n");
+    printf("Fail to mount SD driver!\n\r", 0);
     return 1;
   }
 
   /* Open a text file */
   fr = f_open(&fil, "test.txt", FA_READ);
   if (fr) {
-    printf("failed to open test.text!\n");
+    printf("failed to open test.text!\n\r", 0);
     return (int)fr;
   } else {
-    printf("test.txt opened\n");
+    printf("test.txt opened\n\r", 0);
   }
 
   /* Read all lines and display it */
@@ -40,7 +42,7 @@ int main (void)
     fr = f_read(&fil, buffer, sizeof(buffer)-1, &br);  /* Read a chunk of source file */
     if (fr || br == 0) break; /* error or eof */
     buffer[br] = 0;
-    printf("%s", buffer);
+    printf(buffer, 0);
     fsize += br;
   }
 
@@ -48,15 +50,15 @@ int main (void)
 
   /* Close the file */
   if(f_close(&fil)) {
-    printf("fail to close file!");
+    printf("fail to close file!", 0);
     return 1;
   }
   if(f_mount(NULL, "", 1)) {         /* unmount it */
-    printf("fail to umount disk!");
+    printf("fail to umount disk!", 0);
     return 1;
   }
 
-  printf("test.txt closed.\n");
+  printf("test.txt closed.\n", 0);
 
   return 0;
 }

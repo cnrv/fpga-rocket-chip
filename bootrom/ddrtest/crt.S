@@ -1,4 +1,4 @@
-#define STACK_POSITION 0x60010700
+#define STACK_POSITION 0x6001e000
   .text
   .globl _start
 _start:
@@ -42,3 +42,8 @@ _start:
 1:
 	wfi
 	j 1b
+
+# .section ".end"
+# .globl end_flag
+# end_flag:
+#   .ascii "end of elf"

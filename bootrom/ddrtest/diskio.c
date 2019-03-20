@@ -39,7 +39,7 @@
 
 #include "diskio.h"
 #include "spi.h"
-
+#include "myprintf.h"
 /*--------------------------------------------------------------------------
 
   Module Private Functions
@@ -280,6 +280,8 @@ uint8_t send_cmd (     /* Returns R1 resp (bit7==1:Send failed) */
   }
 
   /* Send command packet */
+  printf("    - cmd %d is sending ... ", cmd);
+  printf("Argument is %d ... ", arg );
   xchg_spi(0x40 | cmd);               /* Start + Command index */
   xchg_spi((uint8_t)(arg >> 24));     /* Argument[31..24] */
   xchg_spi((uint8_t)(arg >> 16));     /* Argument[23..16] */
@@ -296,6 +298,8 @@ uint8_t send_cmd (     /* Returns R1 resp (bit7==1:Send failed) */
   do
     res = xchg_spi(0xFF);
   while ((res & 0x80) && --n);
+
+  printf("Finished, res is : %d \n\r", res);
 
   return res;         /* Return with the response value */
 }
@@ -320,7 +324,7 @@ DSTATUS disk_initialize (
   uint8_t n, cmd, ty, ocr[4];
   uint32_t timeout;
   uint32_t acmd_delay = 100*1000;
-
+  printf("[DISK_INIT]disk init starts ... \n\r", 0);
 
   if (pdrv) return STA_NOINIT;        /* Supports only single drive */
   power_off();                        /* Turn off the socket power to reset the card */
@@ -359,8 +363,11 @@ DSTATUS disk_initialize (
 
   if (ty) {              /* Initialization succeded */
     Stat &= ~STA_NOINIT; /* Clear STA_NOINIT */
+
+    printf("[DISK_INIT]disk init successes!\n\r", 0);
+
   } else {               /* Initialization failed */
-    power_off();
+    printf("[DISK_INIT]disk init failed ...\n\r", 0);
   }
 
   return Stat;
@@ -400,16 +407,22 @@ DRESULT disk_read (
   if (Stat & STA_NOINIT) return RES_NOTRDY;
 
   if (!(CardType & CT_BLOCK)) sector *= 512;  /* Convert to byte address if needed */
+ 
+  printf("[DISK_READ]reading starts at sector %d \n\r", sector);
+  printf("[DISK_READ]totally %d sectors to be read\n\r", count);
 
   cmd = count > 1 ? CMD18 : CMD17;            /*  READ_MULTIPLE_BLOCK : READ_SINGLE_BLOCK */
   if (send_cmd(cmd, sector) == 0) {
     do {
       if (!rcvr_datablock(buff, 512)) break;
       buff += 512;
+        printf("    - %d sectors left to be read\n\r", count-1);
+
     } while (--count);
     if (cmd == CMD18) send_cmd(CMD12, 0);   /* STOP_TRANSMISSION */
   }
   deselect();
+  printf("[DISK_READ]reading finished\n\r", 0);
 
   return count ? RES_ERROR : RES_OK;
 }
@@ -431,6 +444,7 @@ DRESULT disk_write (
   if (pdrv || !count) return RES_PARERR;
   if (Stat & STA_NOINIT) return RES_NOTRDY;
   if (Stat & STA_PROTECT) return RES_WRPRT;
+  printf("[DISK_WRITE]reading starts at sector = %d \n\r", sector);
 
   if (!(CardType & CT_BLOCK)) sector *= 512;  /* Convert to byte address if needed */
 
@@ -451,7 +465,7 @@ DRESULT disk_write (
     }
   }
   deselect();
-
+  printf("[DISK_WRITE]writing is 0-succ/1-fail: %d \n\r", count);
   return count ? RES_ERROR : RES_OK;
 }
 #endif

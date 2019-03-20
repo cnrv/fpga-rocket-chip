@@ -759,19 +759,24 @@ FRESULT move_window (   /* FR_OK(0):succeeded, !=0:error */
 {
   FRESULT res = FR_OK;
 
-
+  printf("[MOVE_WINDOW]we will look into sector %d \n\r", sector);
   if (sector != fs->winsect) {  /* Window offset changed? */
+
 #if !_FS_READONLY
     res = sync_window(fs);      /* Write-back changes */
+    printf("    - result of sync_window is %d \n\r", res);
 #endif
+    
     if (res == FR_OK) {         /* Fill sector window with new data */
       if (disk_read(fs->drv, fs->win, sector, 1) != RES_OK) {
         sector = 0xFFFFFFFF;    /* Invalidate window if data is not reliable */
         res = FR_DISK_ERR;
+        printf("[MOVE_WINDOW]disk read reply with bad number, so failed\n\r", 0 );
       }
       fs->winsect = sector;
     }
   }
+  printf("[MOVE_WINDOW]finished with res %d \n\r", res);
   return res;
 }
 
@@ -2239,6 +2244,8 @@ FRESULT find_volume (   /* FR_OK(0): successful, !=0: any error occurred */
   uint16_t nrsv;
   FATFS *fs;
   uint32_t i;
+  
+  printf("[FIND_VOLUME]find volume starts \n\r", 0);
 
 
   /* Get logical drive number from the path name */
@@ -2278,7 +2285,9 @@ FRESULT find_volume (   /* FR_OK(0): successful, !=0: any error occurred */
 #endif
   /* Find an FAT partition on the drive. Supports only generic partitioning, FDISK and SFD. */
   bsect = 0;
+  printf("    - checking the sector %d \n\r", bsect);
   fmt = check_fs(fs, bsect);                    /* Load sector 0 and check if it is an FAT boot sector as SFD */
+  printf("    - result of check_fs = %d \n\r", fmt);
   if (fmt == 1 || (!fmt && (LD2PT(vol)))) { /* Not an FAT boot sector or forced partition number */
     for (i = 0; i < 4; i++) {           /* Get partition offset */
       pt = fs->win + MBR_Table + i * SZ_PTE;
@@ -2287,8 +2296,11 @@ FRESULT find_volume (   /* FR_OK(0): successful, !=0: any error occurred */
     i = LD2PT(vol);                     /* Partition number: 0:auto, 1-4:forced */
     if (i) i--;
     do {                                /* Find an FAT volume */
+     
       bsect = br[i];
+    
       fmt = bsect ? check_fs(fs, bsect) : 2;    /* Check the partition */
+
     } while (!LD2PT(vol) && fmt && ++i < 4);
   }
   if (fmt == 3) return FR_DISK_ERR;     /* An error occured in the disk I/O layer */
@@ -2356,7 +2368,7 @@ FRESULT find_volume (   /* FR_OK(0): successful, !=0: any error occurred */
   /* Get fsinfo if available */
   fs->fsi_flag = 0x80;
 #if (_FS_NOFSINFO & 3) != 3
-  if (fmt == FS_FAT32               /* Enable FSINFO only if FAT32 and BPB_FSInfo == 1 */
+  if (fmt == FS_FAT32               /* Eable FSINFO only if FAT32 and BPB_FSInfo == 1 */
       && LD_WORD(fs->win + BPB_FSInfo) == 1
       && move_window(fs, bsect + 1) == FR_OK)
     {
@@ -2383,6 +2395,7 @@ FRESULT find_volume (   /* FR_OK(0): successful, !=0: any error occurred */
 #if _FS_LOCK            /* Clear file lock semaphores */
   clear_lock(fs);
 #endif
+  printf("[FIND_VOLUME] find_volume succeeded\n\r", 0);
 
   return FR_OK;
 }
@@ -2439,30 +2452,41 @@ FRESULT f_mount (
 
   vol = get_ldnumber(&rp);
   if (vol < 0) return FR_INVALID_DRIVE;
+
   cfs = FatFs[vol];                 /* Pointer to fs object */
 
   if (cfs) {
-#if _FS_LOCK
+
+#if _FS_LOCK      // 0 
     clear_lock(cfs);
 #endif
+
 #if _FS_REENTRANT                       /* Discard sync object of the current volume */
     if (!ff_del_syncobj(cfs->sobj)) return FR_INT_ERR;
 #endif
+    
     cfs->fs_type = 0;               /* Clear old fs object */
   }
 
   if (fs) {
     fs->fs_type = 0;                /* Clear new fs object */
+
 #if _FS_REENTRANT                       /* Create sync object for the new volume */
     if (!ff_cre_syncobj((uint8_t)vol, &fs->sobj)) return FR_INT_ERR;
 #endif
+
   }
+
   FatFs[vol] = fs;                  /* Register new fs object */
 
   if (!fs || opt != 1) return FR_OK;    /* Do not mount now, it will be mounted later */
 
   res = find_volume(&fs, &path, 0); /* Force mounted the volume */
+  
+
+
   LEAVE_FF(fs, res);
+
 }
 
 

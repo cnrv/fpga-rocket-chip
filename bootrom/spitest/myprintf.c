@@ -6,7 +6,7 @@ void putch(uint8_t ch){
 }
 
 // void printf(char *s, ...)
-void printf(uint8_t *s, uint64_t num)
+void printf(uint8_t *s, uint32_t num)
 {
     int i = 0;
     // va_list va_ptr;
@@ -35,7 +35,7 @@ void printf(uint8_t *s, uint64_t num)
     // va_end(va_ptr);
 }
 
-void printNum(uint64_t num)
+void printNum(uint32_t num)
 {
 	if (num == 0) return;
 	printNum(num / 10);

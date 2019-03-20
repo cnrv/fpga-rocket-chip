@@ -49,7 +49,6 @@
 #define UART_DLM 0x1u
 
 // UART APIs
-extern void uart_demo();
 extern void uart_init();
 extern void uart_send(uint8_t);
 

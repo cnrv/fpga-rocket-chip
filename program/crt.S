@@ -1,5 +1,4 @@
-#define STACK_POSITION 0x6001f000
-#define DDR_BASE 0x80000000
+#define STACK_POSITION 0x80001f00
   .text
   .globl _start
 _start:
@@ -40,8 +39,9 @@ _start:
 
   jal main
 
-  li s0, DDR_BASE
-  jr s0
+1:
+	wfi
+	j 1b
 
 # .section ".end"
 # .globl end_flag
