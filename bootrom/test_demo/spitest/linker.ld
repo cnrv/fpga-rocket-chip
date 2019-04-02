@@ -1,8 +1,9 @@
 SECTIONS
 {
-    . = 0x80000000;
+    . = 0x60010000;
     .text : { *(.text) }
     
+    . = 0x6001a000;
     .rodata : { *(.rodata) }
 
 
@@ -10,9 +11,6 @@ SECTIONS
 
     .sbss : { *(.sbss) }
 
-    . = 0x80016000;
-    .dtb : {*(.dtb)}
-
-    . = 0x80020000;
+    . = 0x6001ff00;
     .sdata : { *(.sdata) }
 }

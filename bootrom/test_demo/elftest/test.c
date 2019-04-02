@@ -30,7 +30,7 @@ int main (void)
 
   uart_init();
 
-  printf("=============== FSBL ===============\n\r", 0);
+  printf("rocket_trans boot program\n\r=====================================\n\r", 0);
 
   // Register work area to the default drive
   if(f_mount(&FatFs, "", 1)) {
@@ -39,10 +39,10 @@ int main (void)
   }
 
   // Open a file
-  printf("Loading boot.elf into memory...\n\r", 0);
+  printf("Load boot.elf into memory\n\r", 0);
   fr = f_open(&fil, "boot.elf", FA_READ);
   if (fr) {
-    printf("Failed to open boot.elf!\n\r", 0);
+    printf("Failed to open boot!\n\r", 0);
     return (int)fr;
   }
 
@@ -57,9 +57,11 @@ int main (void)
   } while(!(fr || br == 0));
 
   printf("Load %d bytes to memory address ", fsize);
-  printf("%d from boot.elf \n\r", (uint64_t)boot_file_buf);
+  printf("%d from boot.bin of ", (uint64_t)boot_file_buf);
+  printf("%d bytes.\n\r", fil.fsize);
 
   // read elf
+  printf("load elf to DDR memory\n\r", 0);
   if(br = load_elf(boot_file_buf, fil.fsize))
     printf("elf read failed with code %d \n\r", br);
 
@@ -74,5 +76,6 @@ int main (void)
   }
 
   spi_disable();
-  printf("============ Jump to DDR ===========\n\r", 0);
+
+  printf("Boot the loaded program...\n\r=====================================\n\r", 0);
 }

@@ -1,4 +1,5 @@
-#define STACK_POSITION 0x80001f00
+#define DDR_BASE 0x80000000
+
   .text
   .globl _start
 _start:
@@ -35,15 +36,20 @@ _start:
   li  x30,0
   li  x31,0
 
-  li sp, STACK_POSITION
+  la sp, _stack
 
   jal main
 
-1:
-	wfi
-	j 1b
+  li s0, DDR_BASE
+  csrr a0, mhartid
+  la a1, _dtb
+  jr s0
 
- .section ".dtb", "awx"
- .globl _dtb
-  _dtb:
-  	.incbin DEVICE_TREE
+  .section ".stack", "awx"
+  .globl _stack
+_stack:
+
+  .section ".dtb", "ax"
+  .globl _dtb
+_dtb:
+  .incbin DEVICE_TREE

@@ -582,7 +582,7 @@ module rocketTop
 
   assign dut_clock = clock30; 
   assign dut_reset = reset | dut_debug_ndreset; 
-  assign dut_interrupts = 2'h0; 
+  assign dut_interrupts = 2'h0;  // need to be connected with interrupts
   assign dut_debug_clockeddmi_dmiClock = clock30; 
   assign dut_debug_clockeddmi_dmiReset = reset; 
 
