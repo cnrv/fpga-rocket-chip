@@ -213,20 +213,21 @@ We gonna build the file system that stores in the elf image, it will be extract 
   - make soft links so that busybox can work as the **init** program
   - `ln -s bin/busybox sbin/init`
   - `ln -s bin/busybox init`
+- copy **inittab** you created above into the /etc
+  - `cp <your_inittab_file> etc/inittab`
 - create a character device for the console
   - `sudo mknod dev/console c 5 1`
 - compress it into a cpio file
   - `find . | cpio --quiet -o -H newc | gzip > ../rootfs.cpio.gz`
   - `cd ..`
   - then you will find a **rootfs.cpio.gz** over there, next to the dir **root** 
-
 - (this section is in reference of riscv-tools/README.md)
 
 ### 3.3 compiling Linux
 
 Now we have our initramfs, **rootfs.cpio.gz**. We can build the linux kernel now.
 
-- copy the rootfs.cpio.gz to the riscv-linux dir and go in to the 
+- copy the rootfs.cpio.gz to the riscv-linux dir and go into riscv-linux
 - `cp <your_rootfs.cpio.gz> <path_to_your_riscv-linux>`
 - `cd <path_to_your_riscv-linux>`
 - `make ARCH=riscv defconfig`
@@ -237,7 +238,7 @@ Now we have our initramfs, **rootfs.cpio.gz**. We can build the linux kernel now
   - fill **rootfs.cpio.gz** in the blank blow
   - ![](pics/kernelconfig.png)
   - `make -jN ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- vmlinux` 
-  - after several  minute, there will be a `vmlinux` under the dir of riscv-linux
+  - after several  minute, there will be a **vmlinux** under the dir of riscv-linux
 
 ### 3.4 build the image
 
@@ -245,9 +246,18 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 - `cd fpga-rocket-chip`
 - `make sd_image VMLINUX=<path_of_your_vmlinux>`
-- you will find a `boot.elf` over there 
+- you will find a **boot.elf** over there 
 
 ## IV On board experiment
+
+- format your sdcard with fat32
+- drag your **boot.elf** into the sdcard
+- eject the sd and insert it into the SDslot on Nexys4ddr board
+- connect the usb and power on the board
+- use serial tools like minicom to capture the output from the board, 115200 8n1
+- Hooray~~~
+- ![](pics/minicom.png)
+- here I put a static-compiled helloworld program inside of the rootfs.cpio, you can also put your own riscv program inside. However the final boot.elf cannot larger than 16MB (cause the sd_loader copy boot.elf to 0x87000000, only 2^24 Bytes to hold the image).
 
 ## V. Q&A, future map, known bugs
 
