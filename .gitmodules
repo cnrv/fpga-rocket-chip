@@ -1,0 +1,3 @@
+[submodule "riscv-pk"]
+	path = riscv-pk
+	url = https://github.com/NeutrinoLiu/riscv-pk
