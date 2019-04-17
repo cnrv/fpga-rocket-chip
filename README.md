@@ -4,6 +4,7 @@
 
 - generate FPGA configuration file, i.g. ***.mcs**
   - DefaultConfig.v / firmware.hex
+  - vivado project
   - *.mcs
 - build linux kernel file, i.g. **vmlinux**
   - busybox / inittab
@@ -187,7 +188,7 @@ Busybox is a useful binary tool, or a tools set to be exact. You can integrate m
 - download busybox, by github or by busybox.net both works
 - `cd busybox-1.xx.xx` 
 - `make allnoconfig`  - to turn off every configuration option
-- `make menuconfig`
+- `make menuconfig` - then it comes to the GUI of busybox configuration
 - Here are the configurations you will have to change:
   - `CONFIG_STATIC=y`, **Build BusyBox as a static binary (no shared libs)** in **Settings - Build Options** 
   - `CONFIG_CROSS_COMPILER_PREFIX=riscv64-unknown-linux-gnu-`, **Cross Compiler prefix** in **Settings - Build Options** 
@@ -271,7 +272,7 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 - use serial tools like minicom to capture the output from the board, 115200 8n1
 - Hooray~~~
 - ![](pics/minicom.png)
-- here I put a static-compiled helloworld program inside of the rootfs.cpio, you can also put your own riscv program inside. However the final boot.elf cannot larger than 16MB (cause the sd_loader copy boot.elf to 0x87000000, only 2^24 Bytes to hold the image).
+- here I put a static-compiled **helloworld** program inside of the rootfs.cpio, you can also put your own riscv program inside. However the final boot.elf cannot larger than 16MB (because the sd_loader copies boot.elf to 0x87000000, only 2^24 Bytes to hold the image).
 
 ## V. Q&A, future map, known bugs
 
