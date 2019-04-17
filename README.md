@@ -1,10 +1,10 @@
-# Step-by-step Guidance of Booting linux on a Rocket-chip SoC on Nexys4ddr
+# Step-by-step Guide of Booting linux on a Rocket-chip SoC on Nexys4ddr
 
 ## I. Big Map
 
-The main idea of this guidance is to provide a step-by-step tutorial of building a **RISC-V** SoC, especially for those who are interested in **Rocket-chip** and want to test it on a real board instead of simulators. At the end of the tutorial, you will boot linux on **Nexys4ddr** fpga board and run your own riscv program on it.
+The main idea of this guide is to provide a step-by-step tutorial of building a **RISC-V** SoC, especially for those who are interested in the **Rocket-chip** and want to test it on a real board instead of simulators. At the end of the tutorial, you will be able to boot a Linux on the **Nexys4ddr** fpga board and run your own riscv programs on it.
 
-You could have a basic idea about keywords from the following links: [RISC-V](https://riscv.org) [Rocket-Chip](https://github.com/freechipsproject/rocket-chip)
+A general background is provided by the following links: [RISC-V](https://riscv.org) and [Rocket-Chip](https://github.com/freechipsproject/rocket-chip).
 
 ### 1.1 How the linux gets booted
 
