@@ -1,5 +1,17 @@
 # Step-by-step Guide of Booting linux on a Rocket-chip SoC on Nexys4ddr
 
+### STEPS OVERVIEW
+
+- generate FPGA configuration file, i.g. ***.mcs**
+  - DefaultConfig.v / firmware.hex
+  - *.mcs
+- build linux kernel file, i.g. **vmlinux**
+  - busybox / inittab
+  - rootfs.cpio
+  - vmlinux
+- build the sd_image, i.g. **boot.elf**
+- on board test
+
 ## I. Big Map
 
 The main idea of this guide is to provide a step-by-step tutorial of building a **RISC-V** SoC, especially for those who are interested in the **Rocket-chip** and want to test it on a real board instead of simulators. At the end of the tutorial, you will be able to boot a Linux on the **Nexys4ddr** FPGA board and run your own riscv programs on it.
