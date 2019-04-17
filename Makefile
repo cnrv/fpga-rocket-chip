@@ -1,17 +1,18 @@
 # neutrino 2019 summer
 # IIE CAS
+# Please have a look at README.md first
 
 ### vivado source
-defaultconfig_v = verilog/DefaultConfig.v
-firmware_hex = verilog/firmware.hex
+defaultconfig_v = verilog/DefaultConfig.v 		#rocket-chip generated verilog
+firmware_hex = verilog/firmware.hex 			#image of BRAM_64K
 
-bootrom_img = rocket-chip/bootrom/bootrom.img
+bootrom_img = rocket-chip/bootrom/bootrom.img 	#image of TLBootRom
 bootrom_s = rocket-chip/bootrom/bootrom.S
 
 vivado_source : $(defaultconfig_v) $(firmware_hex)
 
 $(defaultconfig_v) : $(bootrom_img)
-	cd rocket-chip/vsim && $(MAKE) verilog && cp generated-src/freechips.rocketchip.system.DefaultConfig.v ../verilog/DefaultConfig.v
+	cd rocket-chip/vsim && $(MAKE) verilog && cp generated-src/freechips.rocketchip.system.DefaultConfig.v ../../verilog/DefaultConfig.v
 	@echo "#################################"
 	@echo "##### DefaultConfig.v built #####"
 	@echo "#################################"
@@ -23,14 +24,14 @@ $(bootrom_img) : $(bootrom_s)
 	@echo "#################################"
 
 $(firmware_hex) : 
-	cd firmware && $(MAKE) all
+	cd firmware && $(MAKE) all && cp firmware.hex ../verilog/firmware.hex
 	@echo "#################################"
 	@echo "#####  firmware.hex built   #####"
 	@echo "#################################"
 
 
 ### sd_image
-boot_elf = boot.elf
+boot_elf = boot.elf 							#image stored in sd card, including bbl + kernel
 
 sd_image : $(boot_elf)
 

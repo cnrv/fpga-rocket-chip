@@ -28,7 +28,7 @@ firmware.bin: firmware.elf
 	riscv64-unknown-elf-objcopy -O binary $< $@
 
 firmware.hex: firmware.bin
-	od -t x8 -An -w8 -v $< > $@ && cp $@ ../verilog 
+	od -t x8 -An -w8 -v $< > $@  
 
 clean:
 	-rm firmware.hex firmware.elf firmware.bin #program.txt devicetree.dtb
