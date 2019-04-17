@@ -19,21 +19,21 @@ Here is the whole story of the booting procedure:
 - In the DDR, BBL will do some preparation works, including setting traps, SBI (supervisor binary interface) and physical memory protection, and then handing over a DTB (device tree blob) to the kernel (in early versions, BBL also virtualizes the memory, which is now directly handled by the Linux). Ultimately, BBL starts the Linux kernel: `enter_supervisor_mode(entry, hartid, dub_output())`.
 - After the initialization of the kernel, **busybox_init** starts and calls the **busybox_ash**, which provides you with a command line interface.
 
-### 1.2 basic knowledge required
+### 1.2 Prerequisites
 
-- Make and Makefile
-- How codes turn into machine instructions
+You should know the followings before continue to the next section.
+
+- how to use and read the GNU Makefiles
+- how to compile C/C++ using GNU GCC
 - C and Assembly language
-- Operating System
-- Hardware design experience
+- Basic knowledge of compiling a Linux kernel
+- Some experience in designing hardware using Verilog/SystemVerilog
 
-### 1.3 repo preparation
+### 1.3 Preparing the Project
 
 Download the source files:
 
-`git clone https://github.com/cnrv/fpga-rocket-chip -b nexys4-demo`
-
-` git submodule update --init --recursive`
+`git clone -b nexys4-demo --recursive https://github.com/cnrv/fpga-rocket-chip`
 
 There are several dirs in the repo:
 
