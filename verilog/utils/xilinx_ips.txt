@@ -1,0 +1,10 @@
+// this file is used to record the ips used in the design
+
+NAME				PARAMETER
+clk_wizard			100MHz -> 30MHz and 200MHz, resetn
+axi_crossbar		interface-3 addr-31 width-64 id-4
+uart_16550			30MHz
+axi_bram_ctrl		index-8k width-64 id-4
+memory interf		#NOTICE sysrst-high activation
+clock_converter		
+AXI to quad SPI	
