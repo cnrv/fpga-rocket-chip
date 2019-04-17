@@ -37,16 +37,19 @@ Download the source files:
 
 There are several dirs in the repo:
 
-- **constrains**, **verilog**, **firmware** - those are sources that we will use to build Vivado project and FPGA configration file, namely, mcs. Firmware contains the SDloader program that load elf image into DDR, functioning as a FSBL.
-- **riscv-pk** - a modified verison of [riscv/riscv-pk](https://github.com/riscv/riscv-pk) repo. We plant the DTB into the bbl and slightly change the uart driver. Generally DTB should be located in the firmware, but for debugging convenience (it is time consuming to change the firmware and reburn it into FPGA), I put it just inside the bbl.
+- **constraints**, **verilog**, **firmware** - those are sources that we will use to build Vivado project and FPGA configration file, namely, mcs. Firmware contains the SDloader program (firmware.hex) that load elf image into DDR, functioning as a FSBL, and it will be burned into BRAM_64K.
+- **riscv-pk** - a modified version of [riscv/riscv-pk](https://github.com/riscv/riscv-pk) repo.  BBL together with linux kernel will be put into SDcard and get loaded to DDR by FSBL. **NOTICE:** We implant the DTB into the bbl and slightly change the uart driver. Generally DTB should be located in the firmware, but for debugging convenience (it is time-consuming to change the firmware and reburn it into FPGA), I put it just inside the bbl.
+- **rocket-chip** - a modified version of [freechipsproject/rocket-chip](https://github.com/freechipsproject/rocket-chip) repo. We changed the Bootrom (TLBootrom)  content, so that the cpu can jump to BRAM_64K once it is powerd on.
+- **pics** - pictures for this markdown file
 
 Besides, you also need to download the following repos:
 
 - **cross compiler** - `git clone https://github.com/riscv/riscv-gnu-toolchain` 
-
+  - hash 055959d1334b9d3c3cfbabbfe586241ce0edaf5c , other should also work
 - **linux kernel** -  ` git clone https://github.com/riscv/riscv-linux` 
-
+  - hash 8fe28cb58bcb235034b64cbbb7550a8a43fd88be , other should also work
 - **busybox** that provides init and utils - `git clone https://github.com/mirror/busybox` 
+  - version 1.30 stable , other should also work
 
 ## II. Hardware generation
 
@@ -58,15 +61,21 @@ Also, do not forget to install **vivado usb driver**, in case the Hardware Manag
 
 ### 2.1 building the vivado project
 
-#### 2.1.1 new project wizard
+#### 2.1.1 generate source
+
+- `cd fpga-rocket-chip`
+- `make vivado_source`
+- then you should get `firmware.hex` and `DefaultConfig.v` under /verilog directory.
+
+#### 2.1.2 new project wizard
 
 - Creat New Project 
 - Add Sources - Add Directories - choose **/verilog**
-- Add Constraints - Add Files - choose **/constrains/Board_Pin_Map.xdc**
+- Add Constraints - Add Files - choose **/constraints/Board_Pin_Map.xdc**
 - Default Part - Parts - choose **xc7a100tcsg324-1** , this is the chip that nexys4ddr holds.
 - In the **Project Manager** window, right click **dut_inst - rocketTop (chip_top.v)** and set it as Top module
 
-#### 2.1.2 Adding Peri IPs
+#### 2.1.3 Adding Peri IPs
 
 **a) clocking wizard** 
 
@@ -111,7 +120,7 @@ Also, do not forget to install **vivado usb driver**, in case the Hardware Manag
 - Protocol - AXI4; Read_Write Mode - read write; Addr Width - 32; Data Width - 64; ID Width - 4
 - Clock Concersion Options - Asynchronous - Yes
 
-#### 2.1.3 DDR controller 
+#### 2.1.4 DDR controller 
 
 - [doc](https://www.xilinx.com/support/documentation/ip_documentation/mig_7series/v4_2/ds176_7Series_MIS.pdf)
 - IP Catalog - Memory Interface Generator
@@ -132,7 +141,7 @@ Also, do not forget to install **vivado usb driver**, in case the Hardware Manag
 - Debug Signal - off; check Internal Verf; IO Power Reduction - off; XADC - off
 - Internal Termination Impedance - 50ohms
 - Pin/Bank Selection Mode - Fixed Pin Out
-- Pin Selection For Controller - Read XDC/UCF - select /constrain/DDR_Pin_Map.ucf - Validate
+- Pin Selection For Controller - Read XDC/UCF - select **/constraints/DDR_Pin_Map.ucf** - Validate
 - Accept
 
 ### 2.2 generating MCS
@@ -154,17 +163,23 @@ Also, do not forget to install **vivado usb driver**, in case the Hardware Manag
 
 ## III. linux Image generation
 
-### 3.1 generating DTB
-
-TBA...
+### 3.1 set up initramfs
 
 ### 3.2 compiling Linux
 
 ### 3.3 build the image
 
-## IV. Q&A, future map, known bugs
+Once you have compile your own linux kernel, vmlinux. Then it comes to the building of the sd image. Note down the path of your vmlinux, so that the compiler can link bbl with your vmlinux.
 
-## V. Acknowledgement
+- `cd fpga-rocket-chip`
+- `make sd_image VMLINUX=<path of your vmlinux>`
+- you will find a `boot.elf` over there 
+
+## IV On board experiment
+
+## V. Q&A, future map, known bugs
+
+## VI. Acknowledgement
 
 Prof. Wei Song
 
