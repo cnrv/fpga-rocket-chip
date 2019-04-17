@@ -66,7 +66,7 @@ Also, do not forget to install **vivado usb driver**, in case the Hardware Manag
 
 - `cd fpga-rocket-chip`
 - `make vivado_source`
-- then you should get `firmware.hex` and `DefaultConfig.v` under /verilog directory.
+- then you should get **firmware.hex** and **DefaultConfig.v** under /verilog directory.
 - together with other verilog files, they are the source files used to build vivado project.
 
 #### 2.1.2 new project wizard
@@ -190,7 +190,7 @@ Busybox is a useful binary tool, or a tools set to be exact. You can integrate m
   - **Coreutils** - cat / chmod / echo / ls / mkdir / mknod / pwd / rm / tty
   - **Linux System Utilities** - fdisk / umount 
 
-- There is a **config_busybox** under the **config** directory, you can copy it and use it to overwrite the **.config** under the busybox dir
+- For your convenience, there is a **config_busybox** under the **config** directory, you can copy it and use it to overwrite the **.config** under the busybox dir
 - `make -jN`  (N is the max number of your parallel jobs)
 - Then you will have a **busybox** over there.
 - an **inittab** is needed to instruct the init program, create a document named as **inittab** and write the following into it:
@@ -237,8 +237,10 @@ Now we have our initramfs, **rootfs.cpio.gz**. We can build the linux kernel now
   - check **initial ram filesystem and ram disk (initramfs/initrd) support**
   - fill **rootfs.cpio.gz** in the blank blow
   - ![](pics/kernelconfig.png)
-  - `make -jN ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- vmlinux` 
-  - after several  minute, there will be a **vmlinux** under the dir of riscv-linux
+  - For your convenience, there is a **config_linux** under the **config** directory, you can copy it and use it to overwrite the **.config** under the linux dir
+
+- `make -jN ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- vmlinux`
+- after several  minute, there will be a **vmlinux** under the dir of riscv-linux
 
 ### 3.4 build the image
 
@@ -261,7 +263,11 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 ## V. Q&A, future map, known bugs
 
+TBA...
+
 ## VI. Acknowledgement
+
+TBA...
 
 Prof. Wei Song
 
