@@ -32,7 +32,7 @@ Here is the whole story of linux booting procedure:
 - In **BRAM_64K**, two tasks of our **first stage bootloader** (aka FSBL) are accomplished: to copy the elf image, which contains a **BBL** (Berkeley bootloader) and a **vmlinux** image, to a certain address (@0x870000000) in the DDR, and to extract this elf onto the beginning of DDR(@0x80000000). Following the two tasks, FSBL will jump to DDR and PC will move to the bbl program:  
   - `li s0, DDR_BASE`, ` jr s0`. ( /firmware/head.S )
 - In DDR, BBL will do some preparation works, including setting traps, SBI (supervisor binary interface) and physical memory protection. Then handing over a DTB (device tree blob) to the kernel (in early versions, BBL also virtualizes the memory, which is now directly handled by the Linux). Ultimately, BBL starts the Linux kernel:
-  - `enter_supervisor_mode(entry, hartid, dub_output())`. ( /riscv-pk/machine/minit.c )
+  - `enter_supervisor_mode(entry, hartid, dtb_output())`. ( /riscv-pk/bbl/bbl.c )
 - After the initialization of the kernel, **busybox_init** starts and calls the **busybox_ash**, which provides you with a command line interface.
 
 ### 1.2 Prerequisites
