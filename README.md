@@ -284,7 +284,7 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
   - dts file is located at **/riscv-pk/build/temporary_dtb.dts**
 
 - there is already a BRAM, **TLBootrom**, inside of the rocket-chip, why do you create another **BRAM_64K** ? 
-  - the TLBootrom only has 4KB data, which is not enough to hold a loading-elf-from-SD program.
+  - the TLBootrom only has a capacitance of 4KB, which is not enough to hold a loading-elf-from-SD-to-DDR program.
 
 ### 5.2 Known bugs
 
