@@ -279,12 +279,31 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 - I cannot find devices in Devices Manager
   - make sure to install **xilinx cable driver** in advance, refer to [UG973](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2018_3/ug973-vivado-release-notes-install-license.pdf) in P36
-
+- I cannot find **.config** under linux dirctory (same situation for busybox/.config)
+  - please show hidden files, for ubuntu: File window - View - Show Hidden Files
+  - or you can use command line: `cp fpga-rocket-chip/config/linux_config <your_linux_dir>/.config` 
+  - for busybox/.config: `cp fpga-rocket-chip/config/busybox_config <your_busybox_dir>/.config`
 - Want to change the device tree
   - dts file is located at **/riscv-pk/build/temporary_dtb.dts**
+- There is already a BRAM, **TLBootrom**, inside of the rocket-chip, why do you create another **BRAM_64K** ? 
+  - the TLBootrom only has a capacitance of 4KB, which is not enough to hold a loading-elf-from-SD-to-DDR program
 
-- there is already a BRAM, **TLBootrom**, inside of the rocket-chip, why do you create another **BRAM_64K** ? 
-  - the TLBootrom only has a capacitance of 4KB, which is not enough to hold a loading-elf-from-SD-to-DDR program.
+
+- How to add SD card support?
+  - replace the **<your_linux_dir>/drivers/spi/spi_xilinx.c** with a modified version I provided in **/linux_driver** 
+  - cause there are several new configuration for linux, you have to replace the **.config** file with a new one I provided in /config/linux_config 
+  - rebuild **vmlinux** and **boot.elf**
+  - insert the sd card, power on your FPGA and open minicom
+  - after the busybox starts the ash, do the following:
+    - `cat /proc/partitions`
+    - `mknod /dev/mmcblk0p1 b 179 1`
+    - `mkdir /mnt`
+    - `mount /dev/mmcblk0p1 /mnt`
+    - `cd mnt`
+  - then you will see files in your sd card. (ignore the fat-fs warning)
+  - ![](pics/sdcard.png)
+  - you should see a **mmc0: new SDHC card on SPI** from the console which means the system has recognized it successfully.
+  - a hello program is put in the sd card and it gets executed successfully. 
 
 ### 5.2 Known bugs
 
@@ -292,7 +311,8 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 ### 5.3 Future Map
 
-- Add sd card support for linux system
+- Add sd card support for linux system 
+  - Achieved, see **Q&A**
 - Try to add a GUI or to boot a linux distribution
 - Try to add VGA support for a GUI 
 
