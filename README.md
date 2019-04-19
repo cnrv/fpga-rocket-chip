@@ -291,7 +291,7 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 - How to add SD card support?
   - replace the **<your_linux_dir>/drivers/spi/spi_xilinx.c** with a modified version I provided in **/linux_driver** 
-  - cause there are several new configuration for linux, you have to replace the **.config** file with a new one I provided in /config/linux_config 
+  - cause there are several new configuration for linux, you have to replace the **.config** file with a new one I provided in **/config/linux_config** 
   - rebuild **vmlinux** and **boot.elf**
   - insert the sd card, power on your FPGA and open minicom
   - after the busybox starts the ash, do the following:
