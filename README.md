@@ -51,13 +51,13 @@ Download source files:
 
 `git clone -b nexys4-demo --recursive https://github.com/cnrv/fpga-rocket-chip`
 
-There are several dirs in the repo:
+There are several folders in the repo:
 
-- **constraints**, **verilog**, **firmware** - those are sources that we will use to build Vivado project and FPGA configration file, namely, mcs. Firmware contains the SDloader program (firmware.hex) that load elf image into DDR, functioning as a FSBL, and it will be burned into BRAM_64K.
-- **riscv-pk** - a modified version of [riscv/riscv-pk](https://github.com/riscv/riscv-pk) repo.  BBL together with linux kernel will be put into SDcard and get loaded to DDR by FSBL. **NOTICE:** We implant the DTB into the bbl and slightly change the uart driver. Generally DTB should be located in the firmware, but for debugging convenience (it is time-consuming to change the firmware and reburn it into FPGA), I put it just inside the bbl. DTS is located at riscv-pk/build.
-- **rocket-chip** - a modified version of [freechipsproject/rocket-chip](https://github.com/freechipsproject/rocket-chip) repo. We changed the Bootrom (TLBootrom)  content, so that the cpu can jump to BRAM_64K once it is powerd on.
-- **pics** - pictures for this markdown file
-- in the following part of this guide, path starting with "**/**" refers to path under this repo, fpga-rocket-chip.
+- **constraints**, **verilog**, **firmware** - These are sources that we will use to build the Vivado project and the FPGA configration file, namely, mcs. Firmware contains the SDloader program (firmware.hex) which loads an elf image into DDR, functioning as an FSBL. It will be burned into BRAM_64K.
+- **riscv-pk** - a modified version of [riscv/riscv-pk](https://github.com/riscv/riscv-pk) repo.  BBL together with linux kernel will be put into SDcard and get loaded to DDR by FSBL. **NOTICE:** We implant the DTB into the bbl and slightly change the uart driver. Generally DTB should be located in the firmware but, for debugging convenience (it is time-consuming to change the firmware and reburn it into FPGA), I put it just inside the bbl. DTS is located at riscv-pk/build.
+- **rocket-chip** - a modified version of [freechipsproject/rocket-chip](https://github.com/freechipsproject/rocket-chip) repo. We change the Bootrom (TLBootrom) content, so that the CPU can jump to BRAM_64K once it is powerd on.
+- **pics** - pictures for this markdown file.
+- in the following parts of this guide, path starting with "**/**" refers to path under this repo, fpga-rocket-chip.
 
 Besides, you also need to download the following repos:
 
@@ -73,7 +73,7 @@ Besides, you also need to download the following repos:
 
 **Vivado** version 2016.4; **Ubuntu** version 16 LTS
 
-The tutorial should work well for most version of vivado.
+The tutorial should work well for most version of Vivado.
 
 ### 2.1 building the vivado project
 
@@ -82,7 +82,7 @@ The tutorial should work well for most version of vivado.
 - `cd fpga-rocket-chip`
 - `make vivado_source`
 - then you should get **firmware.hex** and **DefaultConfig.v** under /verilog directory.
-- together with other verilog files, they are the source files used to build vivado project.
+- together with other verilog files, they are the source files used to build Vivado project.
 
 #### 2.1.2 new project wizard
 
