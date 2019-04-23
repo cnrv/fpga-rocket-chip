@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 `define SIM_ENABLE_DDR
-module rocketTop 
+module chip_top 
 ( 
   input   clock100, 
   input   buttonresetn,

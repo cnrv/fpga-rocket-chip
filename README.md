@@ -49,13 +49,15 @@ You should know the followings before continue to the next section.
 
 Download source files:
 
-`git clone -b nexys4-demo --recursive https://github.com/cnrv/fpga-rocket-chip`
+`git clone --recursive https://github.com/cnrv/fpga-rocket-chip`
+
+`git submodule update --init --recursive`
 
 There are several folders in the repo:
 
 - **constraints**, **verilog**, **firmware** - These are sources that we will use to build the Vivado project and the FPGA configration file, namely, mcs. Firmware contains the SDloader program (firmware.hex) which loads an elf image into DDR, functioning as an FSBL. It will be burned into BRAM_64K.
 - **riscv-pk** - a modified version of [riscv/riscv-pk](https://github.com/riscv/riscv-pk) repo.  BBL together with linux kernel will be put into SDcard and get loaded to DDR by FSBL. **NOTICE:** We implant the DTB into the bbl and slightly change the uart driver. Generally DTB should be located in the firmware but, for debugging convenience (it is time-consuming to change the firmware and reburn it into FPGA), I put it just inside the bbl. DTS is located at riscv-pk/build.
-- **rocket-chip** - a modified version of [freechipsproject/rocket-chip](https://github.com/freechipsproject/rocket-chip) repo. We change the Bootrom (TLBootrom) content, so that the CPU can jump to BRAM_64K once it is powerd on.
+- **rocket-chip** - the official [freechipsproject/rocket-chip](https://github.com/freechipsproject/rocket-chip) repo. Our makefile will replace its **/rocket-chip/bootrom** with **/firmware/TLBootrom **automatically, so that the CPU can jump to BRAM_64K once it is powerd on.
 - **pics** - pictures for this markdown file.
 - in the following parts of this guide, path starting with "**/**" refers to path under this repo, fpga-rocket-chip.
 
@@ -267,8 +269,10 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 - format your sdcard with fat32
 - drag your **boot.elf** into the sdcard
 - eject the sd and insert it into the SDslot on Nexys4ddr board
+- make sure your Nexys4ddr is in **QSPI-config** mode, you can check that on your wire-jumper, located on board adjacent to VGA port. 
 - connect the usb and power on the board
 - use serial tools like minicom to capture the output from the board, 115200 8n1
+- at the very beginning you should see **FSBL** and **elf loading information** from serial, which means at least the hardware works fine.
 - Hooray~~~
 - ![](pics/minicom.png)
 - here I put a static-compiled **hello** program inside of the rootfs.cpio, you can also put your own riscv program inside. However the final boot.elf cannot larger than 16MB (because the sd_loader copies boot.elf to 0x87000000, leaving merely 2^24 Bytes to hold the image).
