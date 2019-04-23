@@ -6,10 +6,16 @@
 defaultconfig_v = verilog/DefaultConfig.v 		#rocket-chip generated verilog
 firmware_hex = verilog/firmware.hex 			#image of BRAM_64K
 
-bootrom_img = rocket-chip/bootrom/bootrom.img 	#image of TLBootRom
+bootrom_img = rocket-chip/bootrom/bootrom.img 	#image of TLBootrom
 bootrom_s = rocket-chip/bootrom/bootrom.S
 
-vivado_source : $(defaultconfig_v) $(firmware_hex)
+vivado_source : bootrom_replace $(defaultconfig_v) $(firmware_hex)
+
+bootrom_replace :
+	cp firmware/TLBootroom rocket-chip/bootrom
+	@echo "#################################"
+	@echo "#####  TLBootroom replaced  #####"
+	@echo "#################################"
 
 $(defaultconfig_v) : $(bootrom_img)
 	cd rocket-chip/vsim && $(MAKE) verilog && cp generated-src/freechips.rocketchip.system.DefaultConfig.v ../../verilog/DefaultConfig.v
