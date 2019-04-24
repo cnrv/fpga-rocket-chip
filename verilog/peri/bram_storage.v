@@ -11,7 +11,7 @@ module bram_storage(
 	reg [63:0] outreg;
 	wire[63:0] wmask;
 	
-	parameter BRAM_INIT_FILE = "bootrom.hex";
+	parameter BRAM_INIT_FILE = "firmware.hex";
     initial begin
         if (BRAM_INIT_FILE != "")
             $readmemh(BRAM_INIT_FILE, bram);
