@@ -96,7 +96,7 @@ The tutorial should work well for most version of Vivado.
 - Please check if **firmware.hex** has been added as source file. It should be listed under **unknown file** category, like the screen shot:
   - ![](pics/firmware.png)
   - If there is no **firmware.hex**, please add it manually by right click in the source window and choose **Add Sources ...** , select our **firmware.hex** generated in **2.1.1** . If you cannot fine **firmware.hex** in the **Add Source Files** window, try to change **Files of type**, which locates at the bottom of the window, to **All Files**. 
-  - Once you find it under the **unknown type**, write click it and choose **Set File Type ...** select **Memory File**. After this, you will see **firmware.hex** under the category of **Memory File**.
+  - *VERY IMPORTANTLY*, once you find it under the **unknown type**, right click it and choose **Set File Type ...** select **Memory File**. After this, you will see **firmware.hex** under the category of **Memory File**.
 
 #### 2.1.3 Adding Peri IPs
 
