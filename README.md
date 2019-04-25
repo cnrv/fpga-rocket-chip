@@ -93,6 +93,10 @@ The tutorial should work well for most version of Vivado.
 - Add Constraints - Add Files - choose **/constraints/Board_Pin_Map.xdc**
 - Default Part - Parts - choose **xc7a100tcsg324-1** , this is the chip that nexys4ddr holds.
 - In the **Project Manager** window, right click **dut_inst - rocketTop (chip_top.v)** and set it as Top module
+- Please check if **firmware.hex** has been added as source file. It should be listed under **unknown file** category, like the screen shot:
+  - ![](pics/firmware.png)
+  - If there is no **firmware.hex**, please add it manually by right click in the source window and choose **Add Sources ...** , select our **firmware.hex** generated in **2.1.1** . If you cannot fine **firmware.hex** in the **Add Source Files** window, try to change **Files of type**, which locates at the bottom of the window, to **All Files**. 
+  - Once you find it under the **unknown type**, write click it and choose **Set File Type ...** select **Memory File**. After this, you will see **firmware.hex** under the category of **Memory File**.
 
 #### 2.1.3 Adding Peri IPs
 
@@ -184,7 +188,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 
 ## III. linux Image generation
 
-### 3.1 build busybox 
+### 3.1 build Busybox 
 
 Busybox is a useful binary tool, or a tools set to be exact. You can integrate many frequently used commands (e.g. cd, ls, echo) into this single program. Our **init** is also provided by busybox program.
 

@@ -12,7 +12,7 @@ bootrom_s = rocket-chip/bootrom/bootrom.S
 vivado_source : bootrom_replace $(defaultconfig_v) $(firmware_hex)
 
 bootrom_replace :
-	rm rocket-chip/bootrom/bootrom.img && cp firmware/TLBootrom/* rocket-chip/bootrom 
+	cp firmware/TLBootrom/* rocket-chip/bootrom 
 	@echo "#################################"
 	@echo "#####  TLBootroom replaced  #####"
 	@echo "#################################"
