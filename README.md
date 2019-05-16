@@ -137,7 +137,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 - Component name - axi_quad_api_0
 - AXI Interface Options - **uncheck all**
 - SPI options: Mode - **standard**; Transaction width - **8**; Frequency Ration - **2x1**; Num of Slaves - **1**
-- Check Enable Master Mode; Check **Enable FIFO** - FIFO Depth **16**
+- Check Enable Master Mode; Check **Enable FIFO** - FIFO Depth **16**; Enable STARTUP Primitive - **uncheck**
 
 **f) AXI Clock Converter**
 
@@ -152,7 +152,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 - Component name - mig_7series_0
 - MIG output options - Creat Design
 - Check **AXI4 Interface**
-- Pin Compatible FPGA - Select **xc7a100ti-csd324**
+- Pin Compatible FPGA - Select **xc7a100ti-csg324**
 - Memory Selection - **DDR2 SDRAM**
 - Options for Controller: Clock Period - **5000ps**; PHY to Controller Clock Ration - **4:1**
 - Options for Controller: Memory Part - **MT47H64M16HR-25E**; Data Width - **16**;
