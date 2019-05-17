@@ -64,7 +64,7 @@ There are several folders in the repo:
 Besides, you also need to download the following repos:
 
 - **cross compiler** - `git clone https://github.com/riscv/riscv-gnu-toolchain` 
-  - hash 055959d1334b9d3c3cfbabbfe586241ce0edaf5c , others should also work
+  - the latest one works fine (May 17 2019)
   - install **elf-gcc and** **linux-gcc** and set **RISCV** variable in advance
 - **linux kernel** -  ` git clone https://github.com/riscv/riscv-linux` 
   - hash 8fe28cb58bcb235034b64cbbb7550a8a43fd88be , others should also work
