@@ -326,7 +326,7 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 ## VI. Acknowledgement
 
-- This project is supervised by [Prof. Wei Song](http://wsong83.github.io/) of IIE, CAS.
+- This project was finished by Bangya Liu under the supervision of [Dr. Wei Song](http://wsong83.github.io/) of IIE, CAS.
 - Bootloader flow is in reference of [lowRISC](https://www.lowrisc.org) project.
 - Kernel building is in reference of a early version [riscv/README.md](https://github.com/riscv/riscv-tools/blob/bump-20180430/README.md#creating-root-disk) .
 
