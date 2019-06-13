@@ -115,7 +115,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 - Component name - axi_crossbar_0
 - Global: Num of Slave - **1**; Num of Master - **3**; Protocol - **AXI4**
 - Global: Addr Width - **31**; Data Width - **64**; ID Width - **4**
-- Address: M00_AXI - **0x60000000 - 13**; M01_AXI - **0x60010000 - 16**; M00_AXI - **0x60020000 - 7**
+- Address: M00_AXI - **0x60000000 - 13**; M01_AXI - **0x60010000 - 16**; M02_AXI - **0x60020000 - 7**
 
 **c) AXI UART16550**
 
