@@ -270,7 +270,7 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 
 ## IV On board experiment
 
-- format your sdcard with fat32
+- format your sdcard with fat32 **NOTICE: format the SD card with MBR instead of GUID**
 - drag your **boot.elf** into the sdcard
 - eject the sd and insert it into the SDslot on Nexys4ddr board
 - make sure your Nexys4ddr is in **QSPI-config** mode, you can check that on your wire-jumper, located on board adjacent to VGA port. 
@@ -295,7 +295,8 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
   - dts file is located at **/riscv-pk/build/temporary_dtb.dts**
 - There is already a BRAM, **TLBootrom**, inside of the rocket-chip, why do you create another **BRAM_64K** ? 
   - the TLBootrom only has a capacitance of 4KB, which is not enough to hold a loading-elf-from-SD-to-DDR program
-
+- Mount SD card failed at FSBL
+  - check the format of your SD card: it must be **FAT32** with **MBR**
 
 - How to add SD card support?
   - replace the **<your_linux_dir>/drivers/spi/spi_xilinx.c** with a modified version I provided in **/linux_driver** 
