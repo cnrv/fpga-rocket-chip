@@ -115,14 +115,14 @@ Before I output the TCL script (one of my future work),  at current stage please
 - Component name - axi_crossbar_0
 - Global: Num of Slave - **1**; Num of Master - **3**; Protocol - **AXI4**
 - Global: Addr Width - **31**; Data Width - **64**; ID Width - **4**
-- Address: M00_AXI - **0x60000000 - 13**; M01_AXI - **0x60010000 - 16**; M02_AXI - **0x60020000 - 12**
+- Address: M00_AXI - **0x6000_0000 - 13**; M01_AXI - **0x6001_0000 - 16**; M02_AXI - **0x6002_0000 - 12**
 
 **c) AXI UART16550**
 
 - [doc](https://www.xilinx.com/support/documentation/ip_documentation/axi_uart16550/v2_0/pg143-axi-uart16550.pdf)
 - Component name - axi_uart16550_0
 - AXI CLK Frequency - **30 MHz**
-- UART MOde - **16550**
+- UART Mode - **16550**
 
 **d) AXI BRAM Controller**
 
