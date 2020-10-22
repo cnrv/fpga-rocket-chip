@@ -154,7 +154,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 - Check **AXI4 Interface**
 - Pin Compatible FPGA - Select **xc7a100ti-csg324**
 - Memory Selection - **DDR2 SDRAM**
-- Options for Controller: Clock Period - **5000ps**; PHY to Controller Clock Ration - **4:1**
+- Options for Controller: Clock Period - **5000ps**; PHY to Controller Clock Ratio - **4:1**
 - Options for Controller: Memory Part - **MT47H64M16HR-25E**; Data Width - **16**;
 - Options for Controller: Num of Bank Machines - **4**; Ordering - **Normal**
 - AXI Parameter Options: Data Width - **64**; Arbitration Scheme - **RD_PRI_REG**; ID Width: **4**
@@ -162,7 +162,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 - Memory Options for Controller: Burst type - **Sequential**; Output Drive Strength - **Full**
 - Memory Options for Controller: Controller Chip Select Pin - **Enable**; ODT - **50ohms**
 - Memory Options for Controller: Memory Address Mapping Selection - **BANK/ROW/COLUMN**
-- System Clock - No Buffer; Reference Clock - **Use System Clock**
+- System Clock - No Buffer; Reference Clock - **Use System Clock** (This is available only when system clock is <= 200MHz, use MIG internal PLL is higher than 200MHz)
 - System Reset Polarity - **Active HIGH**
 - Debug Signal - off; check Internal Verf; IO Power Reduction - off; XADC - off
 - Internal Termination Impedance - **50ohms**
