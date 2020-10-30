@@ -77,7 +77,20 @@ Besides, you also need to download the following repos:
 
 The tutorial should work well for most version of Vivado.
 
-### 2.1 building the vivado project
+### 2.1 building the Vivado project
+
+Once you have the cross-compiler compiled and setup and the Vivado software available, the easiest way to create a Vivado project is:
+
+~~~bash
+
+make vivado
+
+~~~
+
+Which should set everything up and open the Vivado GUI. If this fails, follow the instructions below:
+
+**The location of some files have been changed for more straight forwarding make procedure. See MakeFile for more details.**
+~We will modify this README accordingly soon if we get time around. Stay tuned.~
 
 #### 2.1.1 generate source files
 
