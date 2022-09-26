@@ -1,5 +1,7 @@
 `timescale 1ns/1ps
 `define SIM_ENABLE_DDR
+// Define JTAG_BSCAN by default, otherwise JTAG works through PMOD.
+`define JTAG_BSCAN
 module chip_top 
 ( 
   input   clock100, 
@@ -26,14 +28,22 @@ module chip_top
   output        ddr_cs_n,
   output  [1:0] ddr_dm,
   output        ddr_odt,
-  
+
+`ifndef JTAG_BSCAN
+  // pmod JTAG interface
+  input         jtag_pmod_tck,
+  input         jtag_pmod_tms,
+  input         jtag_pmod_tdi,
+  output        jtag_pmod_tdo,
+`endif
+
   //----SD on spi
   inout         spi_cs,
   inout         spi_sclock,
   inout         spi_mosi,
   inout         spi_miso,
   output        sd_poweroff
-  
+
   // position for peris ... TBA
 );
 
@@ -44,18 +54,7 @@ module chip_top
   wire  dut_clock; 
   wire  dut_reset; 
   wire [1:0] dut_interrupts; 
-  //debug module interface
-  wire  dut_debug_clockeddmi_dmi_req_ready; 
-  wire  dut_debug_clockeddmi_dmi_req_valid; 
-  wire [6:0] dut_debug_clockeddmi_dmi_req_addr; 
-  wire [31:0] dut_debug_clockeddmi_dmi_req_data; 
-  wire [1:0] dut_debug_clockeddmi_dmi_req_op; 
-  wire  dut_debug_clockeddmi_dmi_resp_ready; 
-  wire  dut_debug_clockeddmi_dmi_resp_valid; 
-  wire [31:0] dut_debug_clockeddmi_dmi_resp_data; 
-  wire [1:0] dut_debug_clockeddmi_dmi_resp_resp; 
-  wire  dut_debug_clockeddmi_dmiClock; 
-  wire  dut_debug_clockeddmi_dmiReset; 
+
   wire  dut_debug_ndreset; 
   wire  dut_debug_dmactive; 
   //mem
@@ -251,20 +250,7 @@ module chip_top
   wire [3:0] mmio_io_axi4_0_r_id; 
   wire [63:0] mmio_io_axi4_0_r_data; 
   wire [1:0] mmio_io_axi4_0_r_resp; 
-  wire  mmio_io_axi4_0_r_last; 
-
-  // debug transport module (debug2jtag)
-  wire  SimDTM_debug_req_ready; 
-  wire  SimDTM_debug_req_valid; 
-  wire [6:0] SimDTM_debug_req_addr; 
-  wire [31:0] SimDTM_debug_req_data; 
-  wire [1:0] SimDTM_debug_req_op; 
-  wire  SimDTM_debug_resp_ready; 
-  wire  SimDTM_debug_resp_valid; 
-  wire [31:0] SimDTM_debug_resp_data; 
-  wire [1:0] SimDTM_debug_resp_resp; 
-  wire  SimDTM_reset; 
-  wire  SimDTM_clock; 
+  wire  mmio_io_axi4_0_r_last;
   
   wire interrupt_spi;
   wire interrupt_uart;
@@ -286,22 +272,45 @@ module chip_top
     .resetn(buttonresetn),
     .locked(pll_locked) // we use pll locked signal as resetn for ddr ctrl.
   );
-    
+
+  // Set to any value as you like.
+  reg [10:0] jtag_mfr_id = 11'h3aa;
+
+`ifdef JTAG_BSCAN
+  // debug transport module (debug2jtag)
+  wire jtag_tunnel_TCK;
+  wire jtag_tunnel_TMS;
+  wire jtag_tunnel_TDI;
+  wire jtag_tunnel_TDO;
+  wire jtag_tunnel_TDO_EN;
+`else
+  wire jtag_TDO_data_o;
+  wire jtag_TDO_driven_o;
+  assign jtag_pmod_tdo = jtag_TDO_driven_o ? jtag_TDO_data_o : 1'b1;
+`endif
 
   ExampleRocketSystem dut ( 
       .clock(dut_clock),
       .reset(dut_reset),
-      .debug_clockeddmi_dmi_req_ready(dut_debug_clockeddmi_dmi_req_ready),
-      .debug_clockeddmi_dmi_req_valid(dut_debug_clockeddmi_dmi_req_valid),
-      .debug_clockeddmi_dmi_req_bits_addr(dut_debug_clockeddmi_dmi_req_addr),
-      .debug_clockeddmi_dmi_req_bits_data(dut_debug_clockeddmi_dmi_req_data),
-      .debug_clockeddmi_dmi_req_bits_op(dut_debug_clockeddmi_dmi_req_op),
-      .debug_clockeddmi_dmi_resp_ready(dut_debug_clockeddmi_dmi_resp_ready),
-      .debug_clockeddmi_dmi_resp_valid(dut_debug_clockeddmi_dmi_resp_valid),
-      .debug_clockeddmi_dmi_resp_bits_data(dut_debug_clockeddmi_dmi_resp_data),
-      .debug_clockeddmi_dmi_resp_bits_resp(dut_debug_clockeddmi_dmi_resp_resp),
-      .debug_clockeddmi_dmiClock(dut_debug_clockeddmi_dmiClock),
-      .debug_clockeddmi_dmiReset(dut_debug_clockeddmi_dmiReset),
+
+`ifdef JTAG_BSCAN
+      .debug_systemjtag_jtag_TCK(jtag_tunnel_TCK),
+      .debug_systemjtag_jtag_TMS(jtag_tunnel_TMS),
+      .debug_systemjtag_jtag_TDI(jtag_tunnel_TDI),
+      .debug_systemjtag_jtag_TDO_data(jtag_tunnel_TDO),
+      .debug_systemjtag_jtag_TDO_driven(jtag_tunnel_TDO_EN),
+      .debug_systemjtag_reset(dut_reset),
+      .debug_systemjtag_mfr_id(jtag_mfr_id),
+`else
+      .debug_systemjtag_jtag_TCK(jtag_pmod_tck),
+      .debug_systemjtag_jtag_TMS(jtag_pmod_tms),
+      .debug_systemjtag_jtag_TDI(jtag_pmod_tdi),
+      .debug_systemjtag_jtag_TDO_data(jtag_TDO_data_o),
+      .debug_systemjtag_jtag_TDO_driven(jtag_TDO_driven_o),
+      .debug_systemjtag_reset(dut_reset),
+      .debug_systemjtag_mfr_id(jtag_mfr_id),
+`endif
+
       .debug_ndreset(dut_debug_ndreset),
       .debug_dmactive(dut_debug_dmactive),
       .interrupts(dut_interrupts),
@@ -567,22 +576,17 @@ module chip_top
   assign LED[1] = spi_cs;
   assign LED[0] = sd_poweroff;    
   //////////////////////////////////debug
-  
-  
-  DTModule DTM ( 
-    .debug_req_ready(SimDTM_debug_req_ready),
-    .debug_req_valid(SimDTM_debug_req_valid),
-    .debug_req_addr(SimDTM_debug_req_addr),
-    .debug_req_data(SimDTM_debug_req_data),
-    .debug_req_op(SimDTM_debug_req_op),
-    .debug_resp_ready(SimDTM_debug_resp_ready),
-    .debug_resp_valid(SimDTM_debug_resp_valid),
-    .debug_resp_data(SimDTM_debug_resp_data),
-    .debug_resp_resp(SimDTM_debug_resp_resp),
-    .reset(SimDTM_reset),
-    .clk(SimDTM_clock)
+
+`ifdef JTAG_BSCAN
+  JTAGTUNNEL JtagTunnel(
+    .jtag_tck(jtag_tunnel_TCK),
+    .jtag_tms(jtag_tunnel_TMS),
+    .jtag_tdi(jtag_tunnel_TDI),
+    .jtag_tdo(jtag_tunnel_TDO),
+    .jtag_tdo_en(jtag_tunnel_TDO_EN)
   );
-  
+`else
+`endif
 
   //-------------------------connect all the module together---- very verbose by Chisel generated, I will change it later
 
@@ -591,25 +595,6 @@ module chip_top
   
   assign dut_interrupts[0] = interrupt_uart;
   assign dut_interrupts[1] = interrupt_spi;  // need to be connected with interrupts
-  
-  assign dut_debug_clockeddmi_dmiClock = clock30; 
-  assign dut_debug_clockeddmi_dmiReset = reset; 
-
-  //  ***** debug module *****
-  // CR inheritance
-  assign SimDTM_reset = reset; 
-  assign SimDTM_clock = clock30; 
-  //  drived by outside module
-  assign dut_debug_clockeddmi_dmi_req_valid = SimDTM_debug_req_valid;
-  assign dut_debug_clockeddmi_dmi_req_addr = SimDTM_debug_req_addr;
-  assign dut_debug_clockeddmi_dmi_req_data = SimDTM_debug_req_data;
-  assign dut_debug_clockeddmi_dmi_req_op = SimDTM_debug_req_op;
-  assign dut_debug_clockeddmi_dmi_resp_ready = SimDTM_debug_resp_ready;
-  //  output to outside module 
-  assign SimDTM_debug_req_ready = dut_debug_clockeddmi_dmi_req_ready;
-  assign SimDTM_debug_resp_valid = dut_debug_clockeddmi_dmi_resp_valid;
-  assign SimDTM_debug_resp_data = dut_debug_clockeddmi_dmi_resp_data;
-  assign SimDTM_debug_resp_resp = dut_debug_clockeddmi_dmi_resp_resp;
 
 
   //  ***** mem module *****

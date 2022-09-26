@@ -9,6 +9,8 @@ firmware_hex = verilog/firmware.hex 			#image of BRAM_64K
 bootrom_img = rocket-chip/bootrom/bootrom.img 	#image of TLBootrom
 bootrom_s = rocket-chip/bootrom/bootrom.S
 
+rocket_chip_config_file = rocket-chip/src/main/scala/system/Configs.scala
+
 vivado_source : bootrom_replace $(defaultconfig_v) $(firmware_hex)
 
 bootrom_replace :
@@ -18,7 +20,8 @@ bootrom_replace :
 	@echo "#################################"
 
 $(defaultconfig_v) : $(bootrom_img)
-	cd rocket-chip/vsim && $(MAKE) verilog && cp generated-src/freechips.rocketchip.system.DefaultConfig.v ../../verilog/DefaultConfig.v
+	grep -q "DefaultConfigWithJtag" $(rocket_chip_config_file) || echo 'class DefaultConfigWithJtag extends Config(new WithJtagDTMSystem ++ new DefaultConfig)' >> $(rocket_chip_config_file)
+	cd rocket-chip/vsim && $(MAKE) verilog CONFIG=DefaultConfigWithJtag && cp generated-src/freechips.rocketchip.system.DefaultConfigWithJtag.v ../../verilog/DefaultConfig.v
 	@echo "#################################"
 	@echo "##### DefaultConfig.v built #####"
 	@echo "#################################"
