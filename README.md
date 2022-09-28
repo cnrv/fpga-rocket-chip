@@ -281,9 +281,104 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 - ![](pics/minicom.png)
 - here I put a static-compiled **hello** program inside of the rootfs.cpio, you can also put your own riscv program inside. However the final boot.elf cannot larger than 16MB (because the sd_loader copies boot.elf to 0x87000000, leaving merely 2^24 Bytes to hold the image).
 
-## V. Supplement 
+## V. JTAG
 
-### 5.1 Q&A
+From an embedded software engineer's point of view, it is always good to have a JTAG
+debugger. This section will explain two ways to add a JTAG debugger for rocket-chip.
+First, the rocket-chip exposes JTAG pins with `WithJtagDTMSystem` defined in
+Configs.scala.
+
+### 5.1 JTAG over PMOD
+
+Pmod interface (peripheral module interface) is an open standard defined by Digilent
+for connecting peripheral modules to FPGA and microcontroller development boards.
+
+The main idea is to connect JTAG pins from the rocket-chip to those PMOD pins, then
+connects PMOD pins with an FTDI 232 series chip which will further connect to the PC
+USB interface.
+
+In my case, I used JC PMOD, the connections are shown below.
+
+![](pics/pmod_pins.png)
+
+```
+PMOD         FTDI       Comments
+JC pin1 <--> AD0        # TCK
+JC pin2 <--> AD1        # TDI
+JC pin3 <--> AD2        # TDO
+JC pin4 <--> AD3        # TMS
+JC pin5 <--> GND
+```
+
+![](pics/jtag_pmod.png)
+
+After every pin is connected correctly, we can use openocd to access the rocket-chip
+debug module.
+
+```
+$ openocd -f config/openocd_pmod.cfg
+xPack OpenOCD x86_64 Open On-Chip Debugger 0.11.0+dev (2022-09-01-17:58)
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+Info : auto-selecting first available session transport "jtag". To override use 'transport select <transport>'.
+riscv.cpu
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : clock speed 10000 kHz
+Info : JTAG tap: riscv.cpu tap/device found: 0x00000755 (mfg: 0x3aa (Nanjing Yihuo Technology), part: 0x0000, ver: 0x0)
+Info : datacount=2 progbufsize=16
+Info : Disabling abstract command reads from CSRs.
+Info : Examined RISC-V core; found 1 harts
+Info :  hart 0: XLEN=64, misa=0x800000000094112d
+Info : starting gdb server for riscv.cpu.0 on 3333
+Info : Listening on port 3333 for gdb connections
+```
+
+### 5.2 JTAG over BSCAN
+
+BSCAN is Xilinx Boundary-Scan User Instruction, it allows access to and from
+internal logic by the JTAG Boundary Scan logic controller.
+
+Rocket chip JTAG pins will connect to `JTAGTUNNEL` module, and then connects
+to `BSCANE2` module.
+
+The openocd starts the JTAG communication using `USER4` IR, FPGA tap will recognize this
+as a request to the registered rocket chip. Then the rocket-chip IR and DR operation
+are encapsulated inside the DR of the FPGA tap.
+There is a good [article](https://jia.je/hardware/2020/02/09/rocket-chip-bscan-analysis/) that explains the principles with more details.
+
+openocd configuration is a bit different, focus on these two lines.
+
+```
+jtag newtap $_CHIPNAME cpu -irlen 6 # This is the IR length of the FPGA.
+riscv use_bscan_tunnel 5 # This is the IR length of the rocket chip.
+```
+Now we can access rocket-chip debug module by openocd bscan tunnel.
+
+```
+$ openocd -f onfig/openocd_bscan.cfg
+xPack OpenOCD x86_64 Open On-Chip Debugger 0.11.0+dev (2022-09-01-17:58)
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+Info : auto-selecting first available session transport "jtag". To override use 'transport select <transport>'.
+Info : Nested Tap based Bscan Tunnel Selected
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : clock speed 10000 kHz
+Info : JTAG tap: riscv.cpu tap/device found: 0x13631093 (mfg: 0x049 (Xilinx), part: 0x3631, ver: 0x1)
+Info : datacount=2 progbufsize=16
+Info : Disabling abstract command reads from CSRs.
+Info : Examined RISC-V core; found 1 harts
+Info :  hart 0: XLEN=64, misa=0x800000000094112d
+Info : starting gdb server for riscv.cpu.0 on 3333
+Info : Listening on port 3333 for gdb connections
+```
+
+## VI. Supplement 
+
+### 6.1 Q&A
 
 - I cannot find devices in Devices Manager
   - make sure to install **xilinx cable driver** in advance, refer to [UG973](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2018_3/ug973-vivado-release-notes-install-license.pdf) in P36
@@ -314,18 +409,18 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
   - you should see a **mmc0: new SDHC card on SPI** from the console which means the system has recognized it successfully.
   - a hello program is put in the sd card and it gets executed successfully. 
 
-### 5.2 Known bugs
+### 6.2 Known bugs
 
 - The console will output booting info twice; reason is still unknown
 
-### 5.3 Future Map
+### 6.3 Future Map
 
 - Add sd card support for linux system 
   - Achieved, see **Q&A**
 - Try to add a GUI or to boot a linux distribution
 - Try to add VGA support for a GUI 
 
-## VI. Acknowledgement
+## VII. Acknowledgement
 
 - This project was finished by Bangya Liu under the supervision of [Dr. Wei Song](http://wsong83.github.io/) of IIE, CAS.
 - Bootloader flow is in reference of [lowRISC](https://www.lowrisc.org) project.
