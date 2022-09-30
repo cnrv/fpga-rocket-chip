@@ -2,7 +2,7 @@
 
 ### Other Interesting Proejcts
 
-- In the original implementation, debug module is grouded. If you are interested in using GDB (either through PMOD or BSCAN to connect JTAG), you might want to look into [this repo](https://github.com/thomascp/fpga-rocket-chip/tree/nexys-jtag) by thomascp.
+- In the original implementation, debug module is grounded. If you are interested in using GDB (either through PMOD or BSCAN to connect JTAG), you might want to look into [this repo](https://github.com/thomascp/fpga-rocket-chip/tree/nexys-jtag) by thomascp.
 
 ### STEPS OVERVIEW
 
