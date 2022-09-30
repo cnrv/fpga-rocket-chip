@@ -1,16 +1,20 @@
 # Step-by-step Guide of Booting linux on a Rocket-chip SoC on Nexys4ddr
 
+### Other Interesting Proejcts
+
+- In the original implementation, debug module is grouded. If you are interested in using GDB (either through PMOD or BSCAN to connect JTAG), you might want to look into [this repo](https://github.com/thomascp/fpga-rocket-chip/tree/nexys-jtag) by thomascp.
+
 ### STEPS OVERVIEW
 
-- generate FPGA configuration file, i.g. ***.mcs**
+- generate FPGA configuration file, i.e. ***.mcs**
   - DefaultConfig.v / firmware.hex
   - vivado project
   - *.mcs
-- build linux kernel file, i.g. **vmlinux**
+- build linux kernel file, i.e. **vmlinux**
   - busybox / inittab
   - rootfs.cpio
   - vmlinux
-- build the sd_image, i.g. **boot.elf**
+- build the sd_image, i.e. **boot.elf**
 - on board test
 
 ## I. Big Map
