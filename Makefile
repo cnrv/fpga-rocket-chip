@@ -2,11 +2,11 @@
 # IIE CAS
 # Please have a look at README.md first
 
-#PROJ ?= nexys4ddr
-PROJ ?= nexysvideo
+PROJ ?= nexys4ddr
+#PROJ ?= nexysvideo
 
-#CONFIG ?= DefaultNexys4DDRConfig
-CONFIG ?= DefaultNexysVideoConfig
+CONFIG ?= DefaultNexys4DDRConfig
+#CONFIG ?= DefaultNexysVideoConfig
 
 ### vivado source
 bootrom_img = rocket-chip/bootrom/bootrom.img
@@ -32,7 +32,7 @@ $(firmware_hex) :
 	@echo "#####  firmware.hex built   #####"
 	@echo "#################################"
 
-$(vivado_project) | $(defaultconfig_v) $(firmware_hex)
+$(vivado_project): $(defaultconfig_v) $(firmware_hex)
 	vivado -mode batch -source scripts/create_$(PROJ)_vivado_proj.tcl
 
 vivado: $(vivado_project)
