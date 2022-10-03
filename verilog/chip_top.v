@@ -15,7 +15,11 @@ module chip_top
   inout [15:0]  ddr_dq,
   inout [1:0]   ddr_dqs_n,
   inout [1:0]   ddr_dqs_p,
+`ifdef BOARD_NEXYS_VIDEO
   output [14:0] ddr_addr, // nexys-video 15-bit, nexys4-ddr 13-bit
+`else
+  output [12:0] ddr_addr, // nexys-video 15-bit, nexys4-ddr 13-bit
+`endif
   output [2:0]  ddr_ba,
   output        ddr_ras_n,
   output        ddr_cas_n,

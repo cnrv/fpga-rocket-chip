@@ -107,7 +107,7 @@ Which should set everything up and open the Vivado GUI. If this fails, follow th
 
 - Creat New Project 
 - Add Sources - Add Directories - choose **/verilog**
-- Add Constraints - Add Files - choose **/constraints/Board_Pin_Map.xdc**
+- Add Constraints - Add Files - choose **/constraints/nexys4ddr.xdc**
 - Default Part - Parts - choose **xc7a100tcsg324-1** , this is the chip that nexys4ddr holds.
 - In the **Project Manager** window, right click **chip_inst - chip_top (chip_top.v)** and set it as Top module
 - Please check if **firmware.hex** has been added as source file. It should be listed under **unknown file** category, like the screen shot:

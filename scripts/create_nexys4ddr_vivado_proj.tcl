@@ -72,12 +72,14 @@ create_ip -name axi_crossbar -vendor xilinx.com -library ip -module_name axi_cro
 set_property -dict [list \
                         CONFIG.NUM_MI {3} \
                         CONFIG.DATA_WIDTH {64} \
+                        CONFIG.ADDR_WIDTH {31} \
                         CONFIG.ID_WIDTH {4} \
                         CONFIG.M00_A00_BASE_ADDR {0x0000000060000000} \
                         CONFIG.M01_A00_BASE_ADDR {0x0000000060010000} \
                         CONFIG.M02_A00_BASE_ADDR {0x0000000060020000} \
                         CONFIG.M00_A00_ADDR_WIDTH {13} \
-                        CONFIG.M01_A00_ADDR_WIDTH {16} ] \
+                        CONFIG.M01_A00_ADDR_WIDTH {16} \
+                        CONFIG.M02_A00_ADDR_WIDTH {12} ] \
     [get_ips axi_crossbar_0]
 
 #UART
@@ -122,10 +124,10 @@ set_property -dict [list \
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_0/axi_clock_converter_0.xci]
 
 # Memory Controller
-#create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
-#set_property CONFIG.XML_INPUT_FILE [file normalize $base_dir/scripts/$project_name.mig.prj] [get_ips mig_7series_0]
-#generate_target {instantiation_template} \
-#    [get_files $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci]
+create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
+set_property CONFIG.XML_INPUT_FILE [file normalize $base_dir/scripts/$project_name.mig.prj] [get_ips mig_7series_0]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -141,6 +143,17 @@ set file_added [add_files -norecurse -fileset $obj $files]
 
 # generate all IP source code
 generate_target all [get_ips]
+
+#some tweaking of optimizations
+
+set_property STEPS.SYNTH_DESIGN.ARGS.FANOUT_LIMIT 128 [get_runs synth_1]
+set_property STEPS.SYNTH_DESIGN.ARGS.RETIMING true [get_runs synth_1]
+set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
+
+set_property STEPS.OPT_DESIGN.TCL.PRE {} [get_runs impl_1]
+set_property STEPS.OPT_DESIGN.ARGS.DIRECTIVE ExploreWithRemap [get_runs impl_1]
+set_property STEPS.PLACE_DESIGN.ARGS.DIRECTIVE ExtraPostPlacementOpt [get_runs impl_1]
+set_property STEPS.POST_ROUTE_PHYS_OPT_DESIGN.ARGS.DIRECTIVE AggressiveExplore [get_runs impl_1]
 
 # force create the synth_1 path (need to make soft link in Makefile)
 launch_runs -scripts_only synth_1

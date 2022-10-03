@@ -47,7 +47,7 @@ $(boot_elf) : $(VMLINUX)
 ifndef VMLINUX
 	$(error Please set VMLINUX. Please take a look at README)
 endif
-	VMLINUX=$(VMLINUX) $(MAKE) -C riscv-pk/build && cp bbl ../../boot.elf
+	VMLINUX=$(VMLINUX) $(MAKE) -C riscv-pk/build && cp riscv-pk/build/bbl ./boot.elf
 	@echo "#################################"
 	@echo "#####     boot.elf built    #####"
 	@echo "#################################"
@@ -58,6 +58,7 @@ clean:
 	$(MAKE) -C firmware clean
 	$(MAKE) -C riscv-pk/build clean
 	-rm $(defaultconfig_v)
+	-rm $(bootrom_img)
 	-rm $(firmware_hex)
 	-rm $(boot_elf)
 
