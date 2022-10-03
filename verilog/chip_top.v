@@ -2,29 +2,33 @@
 `define SIM_ENABLE_DDR
 module chip_top 
 ( 
-  input   clock100, 
-  input   buttonresetn,
+  input         clock100, 
+  input         buttonresetn,
   
-  output [15:0]LED,
+  output [7:0]  LED,
   
   //----UART
-  output  uart_TX,
-  input   uart_RX,
+  output        uart_TX,
+  input         uart_RX,
   
   //----DDR
-  inout  [15:0] ddr_dq,
-  inout   [1:0] ddr_dqs_n,
-  inout   [1:0] ddr_dqs_p,
-  output [12:0] ddr_addr,
-  output  [2:0] ddr_ba,
+  inout [15:0]  ddr_dq,
+  inout [1:0]   ddr_dqs_n,
+  inout [1:0]   ddr_dqs_p,
+  output [14:0] ddr_addr, // nexys-video 15-bit, nexys4-ddr 13-bit
+  output [2:0]  ddr_ba,
   output        ddr_ras_n,
   output        ddr_cas_n,
   output        ddr_we_n,
+`ifdef BOARD_NEXYS_VIDEO
+      output        ddr_reset_n, // nexys-video
+`else
+      output        ddr_cs_n, // nexys4-ddr
+`endif
   output        ddr_ck_n,
   output        ddr_ck_p,
   output        ddr_cke,
-  output        ddr_cs_n,
-  output  [1:0] ddr_dm,
+  output [1:0]  ddr_dm,
   output        ddr_odt,
   
   //----SD on spi
@@ -38,7 +42,7 @@ module chip_top
 );
 
   wire  clock30; //30m
-  wire  clock200; //200m
+  wire  clock200;
   
   //dut wires
   wire  dut_clock; 
@@ -282,7 +286,7 @@ module chip_top
   clk_wiz_0 clk_gen(
     .clk_in1(clock100),//100m
     .clk_out1(clock30),   //30m
-    .clk_out2(clock200), //200m
+    .clk_out2(clock200),
     .resetn(buttonresetn),
     .locked(pll_locked) // we use pll locked signal as resetn for ddr ctrl.
   );
@@ -478,7 +482,11 @@ module chip_top
     .ddr_ck_n (ddr_ck_n),
     .ddr_ck_p (ddr_ck_p),
     .ddr_cke (ddr_cke),
-    .ddr_cs_n (ddr_cs_n),
+`ifdef BOARD_NEXYS_VIDEO
+    .ddr_reset_n (ddr_reset_n), // nexys-video
+`else
+    .ddr_cs_n(ddr_cs_n), // nexys4-ddr
+`endif
     .ddr_dm (ddr_dm),
     .ddr_odt (ddr_odt)
 //    // for debug
@@ -555,11 +563,10 @@ module chip_top
   
   //////////////////////////////////debug
   
-  assign LED[13] = uart_TX;
-  assign LED[12] = uart_RX;
+  assign LED[7] = uart_TX;
+  assign LED[6] = uart_RX;
   
-  assign LED[15] = dut_reset;
-  assign LED[14] = dut_clock;
+  assign LED[5] = dut_clock;
   
   assign LED[4] = spi_miso;
   assign LED[3] = spi_mosi;
