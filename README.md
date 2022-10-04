@@ -68,16 +68,20 @@ There are several folders in the repo:
 Besides, you also need to download the following repos:
 
 - **cross compiler** - `git clone https://github.com/riscv/riscv-gnu-toolchain` 
-  - the latest one works fine (May 17 2019)
+  - hash e405fbb1da91b0a7c1ffe31f7c53193b907cea5c by Jim Wilson <jimw@sifive.com> Sat May 18 08:11:02 2019 -0700.
+    Newer version might work.
+    The `riscv-glibc`  submodule is out dated. You need to manually change the `.gitmodules` file and replace the url to `https://github.com/riscv/riscv-glibc.git`.
   - install **elf-gcc and** **linux-gcc** and set **RISCV** variable in advance
 - **linux kernel** -  ` git clone https://github.com/riscv/riscv-linux` 
-  - hash 8fe28cb58bcb235034b64cbbb7550a8a43fd88be , others should also work
+  - hash 8fe28cb58bcb235034b64cbbb7550a8a43fd88be by Linus Torvalds <torvalds@linux-foundation.org> Sun Dec 23 15:55:59 2018 -0800.
+    Newer version should also work.
 - **busybox** that provides init and utils - `git clone https://github.com/mirror/busybox` 
-  - version 1.30 stable , others should also work
+  - version 1.30 stable.
+    Newer version should also work.
 
 ## II. Hardware generation 
 
-**Vivado** version 2016.4; **Ubuntu** version 16 LTS
+**Vivado** version 2016.4/2018.03; **Ubuntu** version 16/18 LTS
 
 The tutorial should work well for most version of Vivado.
 
@@ -123,7 +127,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 
 - Component name - clk_wiz_0
 - Clocking Options - Primitive - **PLL**
-- Output Clocks - Output Clock - **clk_out1 30.000; clk_out2 200.000**
+- Output Clocks - Output Clock - **clk_out1 60.000; clk_out2 200.000**
 - Output Clocks - Enable Optional IO - check **reset and locked**
 - Output Clocks - Reset Type - **Active Low**
 
@@ -138,7 +142,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 
 - [doc](https://www.xilinx.com/support/documentation/ip_documentation/axi_uart16550/v2_0/pg143-axi-uart16550.pdf)
 - Component name - axi_uart16550_0
-- AXI CLK Frequency - **30 MHz**
+- AXI CLK Frequency - **60 MHz**
 - UART Mode - **16550**
 
 **d) AXI BRAM Controller**
@@ -347,6 +351,3 @@ Once you have compile your own linux kernel, vmlinux. Then it comes to the build
 - This project was finished by Bangya Liu under the supervision of [Dr. Wei Song](http://wsong83.github.io/) of IIE, CAS.
 - Bootloader flow is in reference of [lowRISC](https://www.lowrisc.org) project.
 - Kernel building is in reference of a early version [riscv/README.md](https://github.com/riscv/riscv-tools/blob/bump-20180430/README.md#creating-root-disk) .
-
-
-
