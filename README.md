@@ -1,9 +1,5 @@
 # Step-by-step Guide of Booting linux on a Rocket-chip SoC on Nexys4ddr
 
-### Other Interesting Proejcts
-
-- In the original implementation, debug module is grounded. If you are interested in using GDB (either through PMOD or BSCAN to connect JTAG), you might want to look into [this repo](https://github.com/thomascp/fpga-rocket-chip/tree/nexys-jtag) by thomascp.
-
 ### STEPS OVERVIEW
 
 - generate FPGA configuration file, i.e. ***.mcs**
@@ -443,6 +439,7 @@ Info : Listening on port 3333 for gdb connections
 
 ## VII. Acknowledgement
 
-- This project was finished by Bangya Liu under the supervision of [Dr. Wei Song](http://wsong83.github.io/) of IIE, CAS.
+- This project was finished by [Bangya Liu](https://www.sqrtwo.com/) under the supervision of [Dr. Wei Song](http://wsong83.github.io/) of IIE, CAS.
+- JTAG support is added by [Peng Cheng](https://github.com/thomascp) using the `JtagDTMSystem` provided by rocket-chip.
 - Bootloader flow is in reference of [lowRISC](https://www.lowrisc.org) project.
 - Kernel building is in reference of a early version [riscv/README.md](https://github.com/riscv/riscv-tools/blob/bump-20180430/README.md#creating-root-disk) .
