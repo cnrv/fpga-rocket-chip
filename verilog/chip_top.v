@@ -4,29 +4,37 @@
 `define JTAG_BSCAN
 module chip_top 
 ( 
-  input   clock100, 
-  input   buttonresetn,
+  input         clock100, 
+  input         buttonresetn,
   
-  output [15:0]LED,
+  output [7:0]  LED,
   
   //----UART
-  output  uart_TX,
-  input   uart_RX,
+  output        uart_TX,
+  input         uart_RX,
   
   //----DDR
-  inout  [15:0] ddr_dq,
-  inout   [1:0] ddr_dqs_n,
-  inout   [1:0] ddr_dqs_p,
-  output [12:0] ddr_addr,
-  output  [2:0] ddr_ba,
+  inout [15:0]  ddr_dq,
+  inout [1:0]   ddr_dqs_n,
+  inout [1:0]   ddr_dqs_p,
+`ifdef BOARD_NEXYS_VIDEO
+  output [14:0] ddr_addr, // nexys-video 15-bit, nexys4-ddr 13-bit
+`else
+  output [12:0] ddr_addr, // nexys-video 15-bit, nexys4-ddr 13-bit
+`endif
+  output [2:0]  ddr_ba,
   output        ddr_ras_n,
   output        ddr_cas_n,
   output        ddr_we_n,
+`ifdef BOARD_NEXYS_VIDEO
+      output        ddr_reset_n, // nexys-video
+`else
+      output        ddr_cs_n, // nexys4-ddr
+`endif
   output        ddr_ck_n,
   output        ddr_ck_p,
   output        ddr_cke,
-  output        ddr_cs_n,
-  output  [1:0] ddr_dm,
+  output [1:0]  ddr_dm,
   output        ddr_odt,
 
 `ifndef JTAG_BSCAN
@@ -47,8 +55,8 @@ module chip_top
   // position for peris ... TBA
 );
 
-  wire  clock30; //30m
-  wire  clock200; //200m
+  wire  clock60; //60m
+  wire  clock200;
   
   //dut wires
   wire  dut_clock; 
@@ -267,8 +275,8 @@ module chip_top
   assign reset = ~ pll_locked;
   clk_wiz_0 clk_gen(
     .clk_in1(clock100),//100m
-    .clk_out1(clock30),   //30m
-    .clk_out2(clock200), //200m
+    .clk_out1(clock60),   //60m
+    .clk_out2(clock200),
     .resetn(buttonresetn),
     .locked(pll_locked) // we use pll locked signal as resetn for ddr ctrl.
   );
@@ -487,7 +495,11 @@ module chip_top
     .ddr_ck_n (ddr_ck_n),
     .ddr_ck_p (ddr_ck_p),
     .ddr_cke (ddr_cke),
-    .ddr_cs_n (ddr_cs_n),
+`ifdef BOARD_NEXYS_VIDEO
+    .ddr_reset_n (ddr_reset_n), // nexys-video
+`else
+    .ddr_cs_n(ddr_cs_n), // nexys4-ddr
+`endif
     .ddr_dm (ddr_dm),
     .ddr_odt (ddr_odt)
 //    // for debug
@@ -564,11 +576,10 @@ module chip_top
   
   //////////////////////////////////debug
   
-  assign LED[13] = uart_TX;
-  assign LED[12] = uart_RX;
+  assign LED[7] = uart_TX;
+  assign LED[6] = uart_RX;
   
-  assign LED[15] = dut_reset;
-  assign LED[14] = dut_clock;
+  assign LED[5] = dut_clock;
   
   assign LED[4] = spi_miso;
   assign LED[3] = spi_mosi;
@@ -590,16 +601,15 @@ module chip_top
 
   //-------------------------connect all the module together---- very verbose by Chisel generated, I will change it later
 
-  assign dut_clock = clock30; 
+  assign dut_clock = clock60; 
   assign dut_reset = reset | dut_debug_ndreset; 
   
   assign dut_interrupts[0] = interrupt_uart;
   assign dut_interrupts[1] = interrupt_spi;  // need to be connected with interrupts
 
-
   //  ***** mem module *****
   // CR inheritance
-  assign mem_clock = clock30; 
+  assign mem_clock = clock60; 
   assign mem_reset = reset; 
   //  drived by outside module
   assign dut_mem_axi4_0_aw_ready = mem_io_axi4_0_aw_ready; 
@@ -648,7 +658,7 @@ module chip_top
 
   //  ***** mmio module *****
   // CR inheritance 
-  assign mmio_clock = clock30; 
+  assign mmio_clock = clock60; 
   assign mmio_reset = reset; 
   //  drived by outside module
   assign dut_mmio_axi4_0_aw_ready = mmio_io_axi4_0_aw_ready; 

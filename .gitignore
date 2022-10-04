@@ -1,0 +1,7 @@
+firmware/firmware.bin
+firmware/firmware.elf
+firmware/firmware.hex
+nexysvideo/
+nexys4ddr/
+*.log
+*.jou

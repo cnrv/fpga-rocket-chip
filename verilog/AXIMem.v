@@ -1,28 +1,28 @@
 `timescale 1ns / 1ps
-`define DDR_MASK 32'h07ffffff
+`define DDR_MASK 32'h7fff_ffff
 
 module AXIMem (
-      input clock,		
-      input clock200, // 200m Hz to drive DDR ctrl
-      input reset,    
+      input         clock, 
+      input         clock200, // 200m Hz to drive DDR ctrl
+      input         reset, 
     
       output        io_axi4_0_aw_ready, 
       input         io_axi4_0_aw_valid, 
-      input  [3:0]  io_axi4_0_aw_id, 
-      input  [31:0] io_axi4_0_aw_addr, 
-      input  [7:0]  io_axi4_0_aw_len, 
-      input  [2:0]  io_axi4_0_aw_size, 
-      input  [1:0]  io_axi4_0_aw_burst,
+      input [3:0]   io_axi4_0_aw_id, 
+      input [31:0]  io_axi4_0_aw_addr, 
+      input [7:0]   io_axi4_0_aw_len, 
+      input [2:0]   io_axi4_0_aw_size, 
+      input [1:0]   io_axi4_0_aw_burst,
 
-      input          io_axi4_0_aw_lock,
-      input   [3:0]  io_axi4_0_aw_cache, 
-      input   [2:0]  io_axi4_0_aw_prot, 
-      input   [3:0]  io_axi4_0_aw_qos,
+      input         io_axi4_0_aw_lock,
+      input [3:0]   io_axi4_0_aw_cache, 
+      input [2:0]   io_axi4_0_aw_prot, 
+      input [3:0]   io_axi4_0_aw_qos,
 
       output        io_axi4_0_w_ready, 
       input         io_axi4_0_w_valid, 
-      input  [63:0] io_axi4_0_w_data, 
-      input  [7:0]  io_axi4_0_w_strb, 
+      input [63:0]  io_axi4_0_w_data, 
+      input [7:0]   io_axi4_0_w_strb, 
       input         io_axi4_0_w_last, 
       input         io_axi4_0_b_ready, 
       output        io_axi4_0_b_valid, 
@@ -30,16 +30,16 @@ module AXIMem (
       output [1:0]  io_axi4_0_b_resp, 
       output        io_axi4_0_ar_ready, 
       input         io_axi4_0_ar_valid, 
-      input  [3:0]  io_axi4_0_ar_id, 
-      input  [31:0] io_axi4_0_ar_addr, 
-      input  [7:0]  io_axi4_0_ar_len, 
-      input  [2:0]  io_axi4_0_ar_size, 
-      input  [1:0]  io_axi4_0_ar_burst, 
+      input [3:0]   io_axi4_0_ar_id, 
+      input [31:0]  io_axi4_0_ar_addr, 
+      input [7:0]   io_axi4_0_ar_len, 
+      input [2:0]   io_axi4_0_ar_size, 
+      input [1:0]   io_axi4_0_ar_burst, 
 
-      input          io_axi4_0_ar_lock, 
-      input  [3:0]  io_axi4_0_ar_cache, 
-      input   [2:0]  io_axi4_0_ar_prot, 
-      input   [3:0]  io_axi4_0_ar_qos, 
+      input         io_axi4_0_ar_lock, 
+      input [3:0]   io_axi4_0_ar_cache, 
+      input [2:0]   io_axi4_0_ar_prot, 
+      input [3:0]   io_axi4_0_ar_qos, 
 
       input         io_axi4_0_r_ready, 
       output        io_axi4_0_r_valid, 
@@ -49,19 +49,20 @@ module AXIMem (
       output        io_axi4_0_r_last,
       
       //----DDR pins
-      inout  [15:0] ddr_dq,
-      inout   [1:0] ddr_dqs_n,
-      inout   [1:0] ddr_dqs_p,
-      output [12:0] ddr_addr,
-      output  [2:0] ddr_ba,
+      inout [15:0]  ddr_dq,
+      inout [1:0]   ddr_dqs_n,
+      inout [1:0]   ddr_dqs_p,
+      output [14:0] ddr_addr,
+      output [2:0]  ddr_ba,
       output        ddr_ras_n,
       output        ddr_cas_n,
       output        ddr_we_n,
+      output        ddr_reset_n, // nexys-video
       output        ddr_ck_n,
       output        ddr_ck_p,
       output        ddr_cke,
-      output        ddr_cs_n,
-      output  [1:0] ddr_dm,
+      output        ddr_cs_n, // nexys4-ddr
+      output [1:0]  ddr_dm,
       output        ddr_odt
       
 //      //for debug
@@ -212,6 +213,77 @@ module AXIMem (
       .m_axi_rready   ( mig_axi4_r_ready    )
       );
 
+`ifdef BOARD_NEXYS_VIDEO
+    mig_7series_0 DDR_ctrl(
+      .ddr3_dq        ( ddr_dq      ),
+      .ddr3_dqs_n     ( ddr_dqs_n   ),
+      .ddr3_dqs_p     ( ddr_dqs_p   ),
+      .ddr3_addr      ( ddr_addr    ),
+      .ddr3_ba        ( ddr_ba      ),
+      .ddr3_ras_n     ( ddr_ras_n   ),
+      .ddr3_cas_n     ( ddr_cas_n   ),
+      .ddr3_we_n      ( ddr_we_n    ),
+      .ddr3_ck_p      ( ddr_ck_p    ),
+      .ddr3_ck_n      ( ddr_ck_n    ),
+      .ddr3_cke       ( ddr_cke     ),
+      .ddr3_reset_n   ( ddr_reset_n ),
+      .ddr3_dm        ( ddr_dm      ),
+      .ddr3_odt       ( ddr_odt     ),
+
+      .sys_clk_i      ( clock200	),
+      .sys_rst        ( reset    ),
+
+      .app_sr_req     ( 1'b0        ),  // ddr control bits, all should be zero
+      .app_ref_req    ( 1'b0        ), // 
+      .app_zq_req     ( 1'b0        ),
+
+      .ui_clk         ( mig_ui_clk  ),  // output  clk - for clk converter  
+      .ui_clk_sync_rst( mig_ui_rst  ),  // output  reset
+      //.mmcm_locked    ( mmcm_locked       ), 
+
+      // axi interface with much higher freq
+      .aresetn        ( resetn  	      ), //                                                    
+      .s_axi_awid     ( mig_axi4_aw_id    ),
+      .s_axi_awaddr   ( mig_axi4_aw_addr  ),
+      .s_axi_awlen    ( mig_axi4_aw_len   ),
+      .s_axi_awsize   ( mig_axi4_aw_size  ),
+      .s_axi_awburst  ( mig_axi4_aw_burst ),
+      .s_axi_awlock   ( mig_axi4_aw_lock  ),//should be grounded
+      .s_axi_awcache  ( mig_axi4_aw_cache ),
+      .s_axi_awprot   ( mig_axi4_aw_prot  ),
+      .s_axi_awqos    ( mig_axi4_aw_qos   ),
+      .s_axi_awvalid  ( mig_axi4_aw_valid ),
+      .s_axi_awready  ( mig_axi4_aw_ready ),
+      .s_axi_wdata    ( mig_axi4_w_data   ),
+      .s_axi_wstrb    ( mig_axi4_w_strb   ),
+      .s_axi_wlast    ( mig_axi4_w_last   ),
+      .s_axi_wvalid   ( mig_axi4_w_valid  ),
+      .s_axi_wready   ( mig_axi4_w_ready  ),
+      .s_axi_bid      ( mig_axi4_b_id     ),
+      .s_axi_bresp    ( mig_axi4_b_resp   ),
+      .s_axi_bvalid   ( mig_axi4_b_valid  ),
+      .s_axi_bready   ( mig_axi4_b_ready  ),
+      .s_axi_arid     ( mig_axi4_ar_id    ),
+      .s_axi_araddr   ( mig_axi4_ar_addr  ),
+      .s_axi_arlen    ( mig_axi4_ar_len   ),
+      .s_axi_arsize   ( mig_axi4_ar_size  ),
+      .s_axi_arburst  ( mig_axi4_ar_burst ),
+      .s_axi_arlock   ( mig_axi4_ar_lock  ),
+      .s_axi_arcache  ( mig_axi4_ar_cache ),
+      .s_axi_arprot   ( mig_axi4_ar_prot  ),
+      .s_axi_arqos    ( mig_axi4_ar_qos   ),
+      .s_axi_arvalid  ( mig_axi4_ar_valid ),
+      .s_axi_arready  ( mig_axi4_ar_ready ),
+      .s_axi_rid      ( mig_axi4_r_id     ),
+      .s_axi_rdata    ( mig_axi4_r_data   ),
+      .s_axi_rresp    ( mig_axi4_r_resp   ),
+      .s_axi_rlast    ( mig_axi4_r_last   ),
+      .s_axi_rvalid   ( mig_axi4_r_valid  ),
+      .s_axi_rready   ( mig_axi4_r_ready  ),
+      
+      .init_calib_complete (init_fin)             
+    );
+`else
     // DDR controller
     mig_7series_0 DDR_ctrl(
       
@@ -285,6 +357,7 @@ module AXIMem (
       
       .init_calib_complete (init_fin)             
     );
+`endif
     
         // for debug
 //    assign s_aw_ready = mig_axi4_aw_ready; 
