@@ -45,7 +45,7 @@ module chip_top
   // position for peris ... TBA
 );
 
-  wire  clock30; //30m
+  wire  clock60; //60m
   wire  clock200;
   
   //dut wires
@@ -289,7 +289,7 @@ module chip_top
   assign reset = ~ pll_locked;
   clk_wiz_0 clk_gen(
     .clk_in1(clock100),//100m
-    .clk_out1(clock30),   //30m
+    .clk_out1(clock60),   //60m
     .clk_out2(clock200),
     .resetn(buttonresetn),
     .locked(pll_locked) // we use pll locked signal as resetn for ddr ctrl.
@@ -597,19 +597,19 @@ module chip_top
 
   //-------------------------connect all the module together---- very verbose by Chisel generated, I will change it later
 
-  assign dut_clock = clock30; 
+  assign dut_clock = clock60; 
   assign dut_reset = reset | dut_debug_ndreset; 
   
   assign dut_interrupts[0] = interrupt_uart;
   assign dut_interrupts[1] = interrupt_spi;  // need to be connected with interrupts
   
-  assign dut_debug_clockeddmi_dmiClock = clock30; 
+  assign dut_debug_clockeddmi_dmiClock = clock60; 
   assign dut_debug_clockeddmi_dmiReset = reset; 
 
   //  ***** debug module *****
   // CR inheritance
   assign SimDTM_reset = reset; 
-  assign SimDTM_clock = clock30; 
+  assign SimDTM_clock = clock60; 
   //  drived by outside module
   assign dut_debug_clockeddmi_dmi_req_valid = SimDTM_debug_req_valid;
   assign dut_debug_clockeddmi_dmi_req_addr = SimDTM_debug_req_addr;
@@ -625,7 +625,7 @@ module chip_top
 
   //  ***** mem module *****
   // CR inheritance
-  assign mem_clock = clock30; 
+  assign mem_clock = clock60; 
   assign mem_reset = reset; 
   //  drived by outside module
   assign dut_mem_axi4_0_aw_ready = mem_io_axi4_0_aw_ready; 
@@ -674,7 +674,7 @@ module chip_top
 
   //  ***** mmio module *****
   // CR inheritance 
-  assign mmio_clock = clock30; 
+  assign mmio_clock = clock60; 
   assign mmio_reset = reset; 
   //  drived by outside module
   assign dut_mmio_axi4_0_aw_ready = mmio_io_axi4_0_aw_ready; 
