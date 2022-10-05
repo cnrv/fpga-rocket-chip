@@ -305,7 +305,25 @@ debugger. This section will explain two ways to add a JTAG debugger for rocket-c
 First, the rocket-chip exposes JTAG pins with `WithJtagDTMSystem` defined in
 Configs.scala.
 
-### 5.1 JTAG over PMOD
+### 5.1 software requirement
+
+First of all, install the 1.x version of libusb if you have not done so.
+
+~~~
+sudo apt-get install libusb-1.0-0-dev
+~~~
+
+You probably need to install the RISC-V's version of openocd.
+
+~~~shell
+git clone https://github.com/riscv/riscv-openocd
+cd riscv-openocd/
+./bootstrap 
+./configure --prefix=$RISCV
+make install
+~~~
+ 
+### 5.2 JTAG over PMOD
 
 Pmod interface (peripheral module interface) is an open standard defined by Digilent
 for connecting peripheral modules to FPGA and microcontroller development boards.
@@ -352,7 +370,7 @@ Info : starting gdb server for riscv.cpu.0 on 3333
 Info : Listening on port 3333 for gdb connections
 ```
 
-### 5.2 JTAG over BSCAN
+### 5.3 JTAG over BSCAN
 
 BSCAN is Xilinx Boundary-Scan User Instruction, it allows access to and from
 internal logic by the JTAG Boundary Scan logic controller.
@@ -374,7 +392,7 @@ riscv use_bscan_tunnel 5 # This is the IR length of the rocket chip.
 Now we can access rocket-chip debug module by openocd bscan tunnel.
 
 ```
-$ openocd -f onfig/openocd_bscan.cfg
+$ openocd -f config/openocd_bscan.cfg
 xPack OpenOCD x86_64 Open On-Chip Debugger 0.11.0+dev (2022-09-01-17:58)
 Licensed under GNU GPL v2
 For bug reports, read
@@ -392,6 +410,39 @@ Info :  hart 0: XLEN=64, misa=0x800000000094112d
 Info : starting gdb server for riscv.cpu.0 on 3333
 Info : Listening on port 3333 for gdb connections
 ```
+
+### 5.4 The simplest use of JTAG
+
+~~~shell
+$ riscv64-unknown-elf-gdb
+GNU gdb (GDB) 10.1
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-pc-linux-gnu --target=riscv64-unknown-elf".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+
+(gdb) target remote localhost:3333
+Remote debugging using 172.31.208.1:3333
+warning: No executable has been specified and target does not support
+determining executable automatically.  Try using the "file" command.
+0xffffffe00009b49c in ?? ()
+
+(gdb) symbol-file /home/peng/job/rocket-chip/riscv-linux/vmlinux
+Reading symbols from /home/peng/job/rocket-chip/riscv-linux/vmlinux...
+
+(gdb) c
+
+~~~
 
 ## VI. Supplement 
 
