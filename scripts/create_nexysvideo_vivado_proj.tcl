@@ -61,7 +61,7 @@ create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_0
 set_property -dict [list \
                         CONFIG.PRIMITIVE {PLL} \
                         CONFIG.RESET_TYPE {ACTIVE_LOW} \
-                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {60.000} \
+                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {50.000} \
                         CONFIG.CLKOUT1_DRIVES {BUFG} \
                         CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {200.000} \
                         CONFIG.CLKOUT2_DRIVES {BUFG} \
@@ -88,7 +88,7 @@ set_property -dict [list \
 create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
 set_property -dict [list \
                         CONFIG.UART_BOARD_INTERFACE {Custom} \
-                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {60} \
+                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {50} \
                        ] [get_ips axi_uart16550_0]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
