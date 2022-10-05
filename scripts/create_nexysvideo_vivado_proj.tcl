@@ -42,6 +42,7 @@ set files [list \
                [file normalize $base_dir/verilog/peri/spi.v ] \
                [file normalize $base_dir/verilog/peri/bram.v ] \
                [file normalize $base_dir/verilog/peri/DTModule.v ] \
+               [file normalize $base_dir/verilog/peri/JtagTunnel.v ] \
                [file normalize $base_dir/verilog/AXIMmio.v ] \
                [file normalize $base_dir/verilog/AXIMem.v ] \
                [file normalize $base_dir/firmware/firmware.hex ] \

@@ -22,3 +22,11 @@ set_property -dict { PACKAGE_PIN W20    IOSTANDARD LVCMOS33 } [get_ports { spi_m
 set_property -dict { PACKAGE_PIN V19    IOSTANDARD LVCMOS33 } [get_ports { spi_miso }]; 
 set_property -dict { PACKAGE_PIN U18    IOSTANDARD LVCMOS33 } [get_ports { spi_cs }]; 
 
+create_clock -period 200.000 -name pmod_jtag_tck [get_ports jtag_pmod_tck]
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets jtag_pmod_tck_IBUF]
+
+set_property -dict { PACKAGE_PIN Y6    IOSTANDARD LVCMOS33 } [get_ports { jtag_pmod_tck }]; # JC1
+set_property -dict { PACKAGE_PIN AA6   IOSTANDARD LVCMOS33 } [get_ports { jtag_pmod_tdi }]; # JC2
+set_property -dict { PACKAGE_PIN AA8   IOSTANDARD LVCMOS33 } [get_ports { jtag_pmod_tdo }]; # JC3
+set_property -dict { PACKAGE_PIN AB8   IOSTANDARD LVCMOS33 } [get_ports { jtag_pmod_tms }]; # JC4
+
