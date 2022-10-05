@@ -68,9 +68,8 @@ There are several folders in the repo:
 Besides, you also need to download the following repos:
 
 - **cross compiler** - `git clone https://github.com/riscv/riscv-gnu-toolchain` 
-  - hash e405fbb1da91b0a7c1ffe31f7c53193b907cea5c by Jim Wilson <jimw@sifive.com> Sat May 18 08:11:02 2019 -0700.
+  - hash c2857f9c03867f9fe9ee8e44b7cf57dd83020455 by Kito Cheng <kito.cheng@sifive.com> Fri Sep 30 01:09:58 2022 +0800
     Newer version might work.
-    The `riscv-glibc`  submodule is out dated. You need to manually change the `.gitmodules` file and replace the url to `https://github.com/riscv/riscv-glibc.git`.
   - install **elf-gcc and** **linux-gcc** and set **RISCV** variable in advance
 - **linux kernel** -  ` git clone https://github.com/riscv/riscv-linux` 
   - hash 8fe28cb58bcb235034b64cbbb7550a8a43fd88be by Linus Torvalds <torvalds@linux-foundation.org> Sun Dec 23 15:55:59 2018 -0800.
