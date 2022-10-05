@@ -123,7 +123,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 
 - Component name - clk_wiz_0
 - Clocking Options - Primitive - **PLL**
-- Output Clocks - Output Clock - **clk_out1 60.000; clk_out2 200.000**
+- Output Clocks - Output Clock - **clk_out1 50.000; clk_out2 200.000**
 - Output Clocks - Enable Optional IO - check **reset and locked**
 - Output Clocks - Reset Type - **Active Low**
 
@@ -138,7 +138,7 @@ Before I output the TCL script (one of my future work),  at current stage please
 
 - [doc](https://www.xilinx.com/support/documentation/ip_documentation/axi_uart16550/v2_0/pg143-axi-uart16550.pdf)
 - Component name - axi_uart16550_0
-- AXI CLK Frequency - **60 MHz**
+- AXI CLK Frequency - **50 MHz**
 - UART Mode - **16550**
 
 **d) AXI BRAM Controller**
